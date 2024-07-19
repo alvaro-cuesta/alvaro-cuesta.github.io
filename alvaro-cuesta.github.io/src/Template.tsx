@@ -32,13 +32,13 @@ export const Template: React.FC<TemplateProps> = ({ title, children }) => {
             </ul>
             <ul>
               <li>
-                <Link href="#technologies">Tech</Link>
+                <Link href="/#technologies">Tech</Link>
               </li>
               <li>
-                <Link href="#knowledge">Knowledge</Link>
+                <Link href="/#knowledge">Knowledge</Link>
               </li>
               <li>
-                <Link href="#projects">Projects</Link>
+                <Link href="/#projects">Projects</Link>
               </li>
             </ul>
           </nav>
