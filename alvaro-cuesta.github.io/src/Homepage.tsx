@@ -104,7 +104,7 @@ export const Homepage: React.FC = () => {
               <span className="fab fa-github" aria-hidden="true"></span> GitHub
               profile
             </Link>{" "}
-            to take a peek at my all public open-source projects, but here are
+            to take a peek at all my public open-source projects, but here are
             some of my favorites:
           </p>
           <ul>
