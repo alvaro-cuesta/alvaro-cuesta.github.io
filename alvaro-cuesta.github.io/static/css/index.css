@@ -1,0 +1,67 @@
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+
+}
+
+header {
+
+}
+
+main {
+
+}
+
+footer {
+
+}
+
+.small-sup {
+  font-size: 50%;
+  vertical-align: super;
+}
+
+header:target {
+  animation: highlight-pulse-bg 500ms ease-out;
+}
+
+article > header:target > h3 {
+  animation: highlight-pulse-text 500ms ease-out;
+}
+
+article > header {
+  & > h1,h2,h3,h4,h5,h6 {
+    margin: 0;
+  }
+}
+
+@keyframes highlight-pulse-bg {
+  from {
+    background-color: var(--pico-card-sectioning-background-color);
+  }
+  50% {
+    background-color: var(--pico-accordion-active-summary-color);
+  }
+  to {
+    background-color: var(--pico-card-sectioning-background-color);
+  }
+}
+
+@keyframes highlight-pulse-text {
+  from {
+    --pico-color: var(--pico-color);
+  }
+  50% {
+    --pico-color: var(--pico-background-color);
+  }
+  to {
+    --pico-color: var(--pico-color);
+  }
+}

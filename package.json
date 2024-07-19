@@ -1,0 +1,6 @@
+{
+  "workspaces": [
+    "alvaro-cuesta.github.io",
+    "xenon-ssg"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "alvaro-cuesta.github.io",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Álvaro Cuesta's personal website.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsx build.ts",
+    "dev": "tsx watch dev.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alvaro-cuesta/alvaro-cuesta.github.io.git"
+  },
+  "author": "Álvaro Cuesta <alvaro-cuesta@GitHub>",
+  "bugs": {
+    "url": "https://github.com/alvaro-cuesta/alvaro-cuesta.github.io/issues"
+  },
+  "homepage": "https://github.com/alvaro-cuesta/alvaro-cuesta.github.io#readme",
+  "dependencies": {
+    "xenon-ssg": "../xenon-ssg"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "express": "^4.19.2",
+    "morgan": "^1.10.0",
+    "tsx": "^4.16.2"
+  }
+}
