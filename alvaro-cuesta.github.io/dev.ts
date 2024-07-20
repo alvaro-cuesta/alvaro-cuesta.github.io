@@ -4,7 +4,7 @@ import { makeSite } from "./src/site";
 
 const main = async () => {
   const site = await makeSite();
-  startXenonExpressDevApp(site, DEV_PORT);
+  startXenonExpressDevApp(site);
 };
 
 main();

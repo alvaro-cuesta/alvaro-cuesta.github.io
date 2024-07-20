@@ -8,4 +8,4 @@
 - Blog posts
   - Comments from GH issues?
   - Ensure this is done through suspendable promises -- also implement some sort of cache
-- Meta og/Twitter tags
+  - Ensure it has proper OG meta tags (and overrides the global ones)

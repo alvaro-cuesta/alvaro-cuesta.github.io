@@ -5,24 +5,55 @@ import {
   XenonExpressRenderMeta,
   XenonExpressSite,
 } from "xenon-ssg-express/src";
-import { RENDER_TO_STREAM_OPTIONS } from "../config";
+import { DEV_PORT, RENDER_TO_STREAM_OPTIONS } from "../config";
 import { staticFilePlugin } from "xenon-ssg-express/src/plugins/static-file";
 import { staticFolderPlugin } from "xenon-ssg-express/src/plugins/static-folder";
 import { singleLightningCssPlugin } from "xenon-ssg-express/src/plugins/single-lightningcss";
 import path from "node:path";
 import { faviconPlugin } from "xenon-ssg-express/src/plugins/favicon";
 import { version } from "../package.json";
+import { PluginInjectableLink } from "xenon-ssg-express/src/plugins/plugins";
 
-const render = (meta: XenonExpressRenderMeta) => {
-  if (meta.pathname === "/") {
-    return <Homepage injectable={meta.injectable} />;
+const render = ({
+  origin,
+  basepath,
+  pathname,
+  injectable,
+  injectableRaw,
+}: XenonExpressRenderMeta) => {
+  const defaultOgImageHref = injectableRaw?.find(
+    (tag): tag is PluginInjectableLink =>
+      tag.type === "link" &&
+      tag.rel === "apple-touch-icon" &&
+      tag.sizes === "1024x1024"
+  )?.href;
+
+  const defaultOgImage = `${origin}${basepath}${defaultOgImageHref}`;
+
+  if (pathname === "/") {
+    return (
+      <Homepage
+        origin={origin}
+        basepath={basepath}
+        pathname={pathname}
+        injectable={injectable}
+        defaultOgImage={defaultOgImage}
+      />
+    );
   }
 
-  if (meta.pathname === "/404.html") {
-    return <NotFound injectable={meta.injectable} />;
+  if (pathname === "/404.html") {
+    return (
+      <NotFound
+        origin={origin}
+        basepath={basepath}
+        pathname={pathname}
+        injectable={injectable}
+      />
+    );
   }
 
-  throw new Error(`Path not found: ${meta.pathname}`);
+  throw new Error(`Path not found: ${pathname}`);
 };
 
 const PICO_FILE = "pico.blue.min.css";

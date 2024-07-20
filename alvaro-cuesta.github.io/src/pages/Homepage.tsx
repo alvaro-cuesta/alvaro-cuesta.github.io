@@ -27,12 +27,41 @@ const Project: React.FC<ProjectProps> = ({
 };
 
 export type HomepageProps = {
+  origin: string;
+  basepath: string;
+  pathname: string;
+  defaultOgImage: string;
   injectable?: ReactNode[];
 };
 
 export const Homepage: React.FC<HomepageProps> = (props) => {
+  const isDefaultOgImageSecure = props.defaultOgImage.startsWith("https://");
+
   return (
-    <Template injectable={props.injectable}>
+    <Template
+      origin={props.origin}
+      basepath={props.basepath}
+      pathname={props.pathname}
+      injectable={props.injectable}
+      metaTags={
+        <>
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content="Álvaro Cuesta" />
+          <meta
+            property="og:description"
+            content="Álvaro Cuesta's personal website."
+          />
+          <meta property="og:image" content={props.defaultOgImage} />
+          {isDefaultOgImageSecure ? (
+            <meta
+              property="og:image:secure_url"
+              content={props.defaultOgImage}
+            />
+          ) : null}
+          <meta name="twitter:card" content="summary" />
+        </>
+      }
+    >
       <section>
         <h2>Full-stack software engineer</h2>
         <p>

@@ -3,27 +3,38 @@ import { Link } from "./ui/Link";
 import { Icon } from "./ui/Icon";
 
 type TemplateProps = {
+  origin: string;
+  basepath: string;
+  pathname: string;
   title?: string;
   injectable?: ReactNode[];
+  metaTags?: ReactNode;
   children: React.ReactNode;
 };
 
 export const Template: React.FC<TemplateProps> = ({
+  origin,
+  basepath,
+  pathname,
   title,
   injectable,
+  metaTags,
   children,
 }) => {
   const fullTitle = title ? `${title} | Álvaro Cuesta` : "Álvaro Cuesta";
   const year = new Date().getFullYear();
 
   return (
-    <html lang="en">
+    <html lang="en" prefix="og: http://ogp.me/ns#">
       <head>
         <meta charSet="utf-8" />
         <title>{fullTitle}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="darkreader-lock" />
         {injectable}
+        <meta property="og:site_name" content="Álvaro Cuesta" />
+        <meta property="og:url" content={`${origin}${basepath}${pathname}`} />
+        {metaTags}
       </head>
       <body>
         <header className="container">
