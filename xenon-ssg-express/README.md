@@ -15,3 +15,4 @@ Dead simple layer, following the same simplicity philosophy (libraries before fr
 - [Static file](./src/plugins/static-file.ts)
 - [Static folder](./src/plugins/static-folder.ts)
 - [Single LightningCSS](./src/plugins/single-lightningcss.ts)
+- [Favicon](./src/plugins/favicon.ts)

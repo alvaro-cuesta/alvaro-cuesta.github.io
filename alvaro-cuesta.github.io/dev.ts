@@ -1,5 +1,10 @@
-import { site } from "./src/site";
 import { DEV_PORT } from "./config";
 import { startXenonExpressDevApp } from "xenon-ssg-express/src/dev";
+import { makeSite } from "./src/site";
 
-startXenonExpressDevApp(site, DEV_PORT);
+const main = async () => {
+  const site = await makeSite();
+  startXenonExpressDevApp(site, DEV_PORT);
+};
+
+main();

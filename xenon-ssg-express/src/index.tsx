@@ -26,7 +26,23 @@ export const makeXenonRenderFromXenonExpressSite = (site: XenonExpressSite) => {
     switch (tag.type) {
       case "stylesheet":
         return <link key={index} rel="stylesheet" href={tag.href} />;
+
+      case "link":
+        return (
+          <link
+            key={index}
+            rel={tag.rel}
+            sizes={tag.sizes}
+            media={tag.media}
+            href={tag.href}
+          />
+        );
+
+      case "meta":
+        return <meta key={index} name={tag.name} content={tag.content} />;
+
       default:
+        // @ts-expect-error This should never happen
         throw new Error(`Unknown injectable tag type: ${tag.type}`);
     }
   });

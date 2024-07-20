@@ -16,6 +16,7 @@ export const staticFilePlugin = ({
   mountPointFragments,
   injectAs,
 }: StaticFilePluginOptions): PluginReturn => {
+  // TODO: Do I need cache busting?
   const pathname = `/${mountPointFragments.join("/")}/${outputFilename}`;
 
   const attachToExpress = (app: Express) => {

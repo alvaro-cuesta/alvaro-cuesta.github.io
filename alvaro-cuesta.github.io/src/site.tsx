@@ -10,6 +10,8 @@ import { staticFilePlugin } from "xenon-ssg-express/src/plugins/static-file";
 import { staticFolderPlugin } from "xenon-ssg-express/src/plugins/static-folder";
 import { singleLightningCssPlugin } from "xenon-ssg-express/src/plugins/single-lightningcss";
 import path from "node:path";
+import { faviconPlugin } from "xenon-ssg-express/src/plugins/favicon";
+import { version } from "../package.json";
 
 const render = (meta: XenonExpressRenderMeta) => {
   if (meta.pathname === "/") {
@@ -66,14 +68,33 @@ export const indexCss = singleLightningCssPlugin({
   mountPointFragments: ["css"],
 });
 
-export const site: XenonExpressSite = {
-  render,
-  renderToStreamOptions: RENDER_TO_STREAM_OPTIONS,
-  plugins: [
-    staticFolder,
-    picoCss,
-    fontAwesomeCss,
-    fontawesomeWebfontsFolder,
-    indexCss,
-  ],
+export const makeSite = async (): Promise<XenonExpressSite> => {
+  const favicon = await faviconPlugin({
+    inputFilepath: path.join(__dirname, "favicon.svg"),
+    faviconOptions: {
+      appName: "Álvaro Cuesta",
+      appShortName: "Álvaro Cuesta",
+      appDescription: "Álvaro Cuesta's personal website",
+      developerName: "Álvaro Cuesta",
+      developerURL: "https://github.com/alvaro-cuesta",
+      background: "#13171f", // --pico-background-color
+      theme_color: "#8999f9", // --pico-color
+      display: "browser",
+      version,
+    },
+    mountPointFragments: ["/"],
+  });
+
+  return {
+    render,
+    renderToStreamOptions: RENDER_TO_STREAM_OPTIONS,
+    plugins: [
+      favicon,
+      staticFolder,
+      picoCss,
+      fontAwesomeCss,
+      fontawesomeWebfontsFolder,
+      indexCss,
+    ],
+  };
 };

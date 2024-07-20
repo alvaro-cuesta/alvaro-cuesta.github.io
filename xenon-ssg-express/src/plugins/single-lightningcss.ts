@@ -17,16 +17,21 @@ export const singleLightningCssPlugin = ({
 }: SingleLightningCssPluginOptions): PluginReturn => {
   const pathname = `/${mountPointFragments.join("/")}/${outputFilename}`;
 
+  // TODO: Do I need cache busting?
   // TODO: Some cache/watch would be nice
   const compileCss = async () => {
     const code = await fs.readFile(path.join(inputFilepath));
 
-    let { code: outputCode } = transform({
+    let { code: outputCode, warnings } = transform({
       filename: "index.css",
       code,
       minify: true,
       sourceMap: false,
     });
+
+    if (warnings.length > 0) {
+      console.warn(warnings);
+    }
 
     return outputCode;
   };

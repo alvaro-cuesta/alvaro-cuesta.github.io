@@ -1,9 +1,22 @@
 import type { Express } from "express";
 
-export type PluginInjectableTag = {
-  type: "stylesheet";
-  href: string;
-};
+export type PluginInjectableTag =
+  | {
+      type: "stylesheet";
+      href: string;
+    }
+  | {
+      type: "link";
+      rel: string;
+      sizes?: string;
+      media?: string;
+      href: string;
+    }
+  | {
+      type: "meta";
+      name: string;
+      content: string;
+    };
 
 export type PluginReturn = {
   /**
