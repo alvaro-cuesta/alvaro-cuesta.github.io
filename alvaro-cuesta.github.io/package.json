@@ -22,6 +22,7 @@
     "@picocss/pico": "^2.0.6",
     "classnames": "^2.5.1",
     "fontawesome-free": "^1.0.4",
+    "lightningcss": "^1.25.1",
     "xenon-ssg": "../xenon-ssg"
   },
   "devDependencies": {
