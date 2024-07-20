@@ -28,6 +28,12 @@ const render = ({
       tag.sizes === "1024x1024"
   )?.href;
 
+  if (!defaultOgImageHref) {
+    throw new Error(
+      "Default og:image not found -- possibly the `favicon` plugin is missing or misconfigured"
+    );
+  }
+
   const defaultOgImage = `${origin}${basepath}${defaultOgImageHref}`;
 
   if (pathname === "/") {
