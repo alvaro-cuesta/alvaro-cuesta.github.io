@@ -23,5 +23,9 @@ export const makeXenonMiddleware =
       options
     );
 
+    renderedStream.on("error", (error) => {
+      next(error);
+    });
+
     renderedStream.pipe(res);
   };
