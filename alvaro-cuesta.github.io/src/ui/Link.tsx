@@ -3,10 +3,14 @@ import { Link as XenonLink } from "xenon-ssg/src/generate/Link";
 import { canonicalizeHref } from "xenon-ssg/src/url";
 import { Icon } from "./Icon";
 
-type LinkProps = ComponentPropsWithoutRef<"a"> & { isExternal?: boolean };
+type LinkProps = ComponentPropsWithoutRef<"a"> & {
+  isExternal?: boolean;
+  hideExternalIcon?: boolean;
+};
 
 export const Link: React.FC<LinkProps> = ({
   isExternal,
+  hideExternalIcon,
   children,
   ...props
 }) => {
@@ -21,7 +25,7 @@ export const Link: React.FC<LinkProps> = ({
       rel={calculatedIsExternal ? "noopener noreferrer" : undefined}
     >
       {children}
-      {calculatedIsExternal ? (
+      {calculatedIsExternal && !hideExternalIcon ? (
         <Icon
           collection="fas"
           name="external-link-alt"
