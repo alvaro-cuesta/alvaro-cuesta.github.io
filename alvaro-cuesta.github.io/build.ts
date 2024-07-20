@@ -2,10 +2,16 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { generateStaticSite } from "xenon-ssg/src/generate/generate";
 import { renderSite } from "./src/site";
-import { PICO_FILE } from "./config";
-
-const STATIC_FOLDER = path.join(__dirname, "static");
-const OUTPUT_FOLDER = path.join(__dirname, "dist");
+import {
+  FONTAWESOME_FILE,
+  FONTAWESOME_FILE_PATH,
+  FONTAWESOME_WEBFONTS_PATH,
+  OUTPUT_FOLDER,
+  PICO_FILE,
+  PICO_FILE_PATH,
+  RENDER_TO_STREAM_OPTIONS,
+  STATIC_FOLDER,
+} from "./config";
 
 const main = async () => {
   await fs.rm(OUTPUT_FOLDER, {
@@ -16,18 +22,23 @@ const main = async () => {
   await generateStaticSite(renderSite, {
     entryPaths: new Set(["", "404.html"]),
     outputDir: OUTPUT_FOLDER,
-    renderToStreamOptions: {
-      timeoutMsecs: 1000,
-    },
+    renderToStreamOptions: RENDER_TO_STREAM_OPTIONS,
   });
 
   console.log("Copying static files...");
 
   await fs.cp(STATIC_FOLDER, OUTPUT_FOLDER, { recursive: true });
-
   await fs.cp(
-    require.resolve(`@picocss/pico/css/${PICO_FILE}`),
-    path.join(OUTPUT_FOLDER, "css", "pico", PICO_FILE),
+    PICO_FILE_PATH,
+    path.join(OUTPUT_FOLDER, "css", "pico", PICO_FILE)
+  );
+  await fs.cp(
+    FONTAWESOME_FILE_PATH,
+    path.join(OUTPUT_FOLDER, "css", "fontawesome", "css", FONTAWESOME_FILE)
+  );
+  await fs.cp(
+    FONTAWESOME_WEBFONTS_PATH,
+    path.join(OUTPUT_FOLDER, "css", "fontawesome", "webfonts"),
     { recursive: true }
   );
 

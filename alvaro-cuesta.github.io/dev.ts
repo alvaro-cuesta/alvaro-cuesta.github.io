@@ -3,26 +3,25 @@ import express from "express";
 import path from "node:path";
 import { makeXenonMiddleware } from "../xenon-ssg/src/middleware";
 import morgan from "morgan";
-import { PICO_FILE } from "./config";
-
-const picoCssFile = require.resolve(`@picocss/pico/css/${PICO_FILE}`);
-
-const PORT = 3000;
+import {
+  DEV_PORT,
+  FONTAWESOME_FILE_PATH,
+  FONTAWESOME_WEBFONTS_PATH,
+  PICO_FILE_PATH,
+  RENDER_TO_STREAM_OPTIONS,
+} from "./config";
 
 const app = express();
 
 app.use(morgan("dev"));
 
-app.use(express.static(path.join(process.cwd(), "static")));
+app.use(express.static(path.join(__dirname, "static")));
+app.use("/css/pico/*", express.static(PICO_FILE_PATH));
+app.use("/css/fontawesome/css/*", express.static(FONTAWESOME_FILE_PATH));
+app.use("/css/fontawesome/webfonts", express.static(FONTAWESOME_WEBFONTS_PATH));
 
-app.use("/css/pico/*", express.static(path.join(picoCssFile)));
+app.use(makeXenonMiddleware(renderSite, RENDER_TO_STREAM_OPTIONS));
 
-app.use(
-  makeXenonMiddleware(renderSite, {
-    timeoutMsecs: 1000,
-  })
-);
-
-app.listen(PORT, "127.0.0.1", () => {
-  console.log(`Listening on http://localhost:${PORT}`);
+app.listen(DEV_PORT, "127.0.0.1", () => {
+  console.log(`Listening on http://localhost:${DEV_PORT}`);
 });

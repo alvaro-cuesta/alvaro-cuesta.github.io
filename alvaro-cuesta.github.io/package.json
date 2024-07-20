@@ -20,6 +20,7 @@
   "homepage": "https://github.com/alvaro-cuesta/alvaro-cuesta.github.io#readme",
   "dependencies": {
     "@picocss/pico": "^2.0.6",
+    "fontawesome-free": "^1.0.4",
     "xenon-ssg": "../xenon-ssg"
   },
   "devDependencies": {
