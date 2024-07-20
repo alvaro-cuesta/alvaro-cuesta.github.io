@@ -3,5 +3,5 @@
 ## TODO
 
 - Favicon generator
-- Copy Fontawesome and Pico CSS from NPM packages
+- Copy Fontawesome and from NPM package (or maybe use their React component)
 - Use my CSS as source and then minify it

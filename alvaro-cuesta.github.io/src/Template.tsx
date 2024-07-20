@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "./Link";
+import { PICO_FILE } from "../config";
 
 type TemplateProps = {
   title?: string;
@@ -16,7 +17,7 @@ export const Template: React.FC<TemplateProps> = ({ title, children }) => {
         <meta charSet="utf-8" />
         <title>{fullTitle}</title>
         <meta name="darkreader-lock" />
-        <link rel="stylesheet" href="/css/pico/pico.blue.min.css" />
+        <link rel="stylesheet" href={`/css/pico/${PICO_FILE}`} />
         <link rel="stylesheet" href="/css/fontawesome/css/all.min.css" />
         <link rel="stylesheet" href="/css/index.min.css" />
       </head>

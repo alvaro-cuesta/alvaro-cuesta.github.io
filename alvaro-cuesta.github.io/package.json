@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/alvaro-cuesta/alvaro-cuesta.github.io#readme",
   "dependencies": {
+    "@picocss/pico": "^2.0.6",
     "xenon-ssg": "../xenon-ssg"
   },
   "devDependencies": {
