@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "./Link";
 import { PICO_FILE } from "../config";
+import { Icon } from "./Icon";
 
 type TemplateProps = {
   title?: string;
@@ -58,8 +59,7 @@ export const Template: React.FC<TemplateProps> = ({ title, children }) => {
                   href="https://github.com/alvaro-cuesta/"
                   aria-label="Álvaro Cuesta's GitHub (opens in new tab)"
                 >
-                  <span className="fab fa-github" aria-hidden="true"></span>{" "}
-                  GitHub
+                  <Icon collection="fab" name="github" aria-hidden /> GitHub
                 </Link>
               </li>
             </ul>

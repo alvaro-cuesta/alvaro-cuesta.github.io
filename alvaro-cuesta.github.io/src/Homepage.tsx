@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "./Link";
 import { Template } from "./Template";
+import { Icon } from "./Icon";
 
 type ProjectProps = {
   name: string;
@@ -73,12 +74,12 @@ export const Homepage: React.FC = () => {
               </header>
               <ul>
                 <li>
-                  <Link href="https://nodejs.org">Node.js</Link>+{" "}
-                  <Link href="https://www.typescriptlang.org">TypeScript</Link>+{" "}
-                  <Link href="https://reactjs.org">React</Link>
+                  <Link href="https://nodejs.org">Node.js</Link> +{" "}
+                  <Link href="https://www.typescriptlang.org">TypeScript</Link>{" "}
+                  + <Link href="https://reactjs.org">React</Link>
                 </li>
                 <li>
-                  <Link href="https://www.rust-lang.org">Rust</Link>+{" "}
+                  <Link href="https://www.rust-lang.org">Rust</Link> +{" "}
                   <Link href="https://tauri.studio">Tauri</Link>
                 </li>
               </ul>
@@ -101,8 +102,7 @@ export const Homepage: React.FC = () => {
           <p>
             You can visit my{" "}
             <Link href="https://github.com/alvaro-cuesta">
-              <span className="fab fa-github" aria-hidden="true"></span> GitHub
-              profile
+              <Icon collection="fab" name="github" aria-hidden /> GitHub profile
             </Link>{" "}
             to take a peek at all my public open-source projects, but here are
             some of my favorites:

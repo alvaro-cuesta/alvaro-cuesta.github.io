@@ -1,6 +1,7 @@
 import React, { ComponentPropsWithoutRef } from "react";
 import { Link as XenonLink } from "xenon-ssg/src/generate/Link";
 import { canonicalizeHref } from "xenon-ssg/src/url";
+import { Icon } from "./Icon";
 
 type LinkProps = ComponentPropsWithoutRef<"a"> & { isExternal?: boolean };
 
@@ -21,9 +22,11 @@ export const Link: React.FC<LinkProps> = ({
     >
       {children}
       {calculatedIsExternal ? (
-        <span
-          className="fas fa-external-link-alt small-sup"
-          aria-hidden="true"
+        <Icon
+          collection="fas"
+          name="external-link-alt"
+          className="small-sup"
+          aria-label=" (opens in new tab)"
         />
       ) : null}
     </XenonLink>
