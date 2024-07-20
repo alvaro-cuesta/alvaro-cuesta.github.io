@@ -1,14 +1,18 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Link } from "./ui/Link";
 import { Icon } from "./ui/Icon";
-import { fontAwesomeCss, indexCss, picoCss } from "../config";
 
 type TemplateProps = {
   title?: string;
+  injectable?: ReactNode[];
   children: React.ReactNode;
 };
 
-export const Template: React.FC<TemplateProps> = ({ title, children }) => {
+export const Template: React.FC<TemplateProps> = ({
+  title,
+  injectable,
+  children,
+}) => {
   const fullTitle = title ? `${title} | Álvaro Cuesta` : "Álvaro Cuesta";
   const year = new Date().getFullYear();
 
@@ -19,9 +23,7 @@ export const Template: React.FC<TemplateProps> = ({ title, children }) => {
         <title>{fullTitle}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="darkreader-lock" />
-        <link rel="stylesheet" href={picoCss.pathname} />
-        <link rel="stylesheet" href={fontAwesomeCss.pathname} />
-        <link rel="stylesheet" href={indexCss.pathname} />
+        {injectable}
       </head>
       <body>
         <header className="container">

@@ -5,6 +5,7 @@ import fs from "node:fs/promises";
 import { mapIter } from "../iter";
 import { canonicalizeHref } from "../url";
 import { Root } from "../Root";
+import { XenonRenderFunction } from "..";
 
 const FAKE_BASE_URL =
   "https://www.fakeorigin.if-this-collides-with-a-real-url-im-gonna-be-surprised.example.com";
@@ -44,7 +45,7 @@ export const generateStaticSite = async (
    *
    * The function will be called with the `pathname` to render, relative to the root of the site.
    */
-  renderFn: (pathname: string) => ReactNode,
+  renderFn: XenonRenderFunction,
   {
     entryPaths = ["/"],
     outputDir = path.join(process.cwd(), "dist"),
@@ -75,22 +76,17 @@ export const generateStaticSite = async (
       );
     }
 
-    console.debug(`Rendering pathname ${pathname}...`);
-
     // TODO: Allow other file extensions?
     const filepath = pathname.endsWith(".html")
       ? pathname
       : pathname.endsWith("/")
       ? `${pathname}index.html`
       : `${pathname}/index.html`;
-
-    console.debug(`...into filepath ${filepath}...`);
-
     const fullFilePath = path.join(outputDir, filepath);
-    console.debug(`...into fullFilePath ${fullFilePath}...`);
-
     const fullFilePathDir = path.dirname(fullFilePath);
-    console.debug(`...into fullFilePathDir ${fullFilePathDir}.`);
+
+    console.debug(`[Rendering] ${pathname}
+  ${fullFilePath}`);
 
     await fs.mkdir(fullFilePathDir, { recursive: true });
 

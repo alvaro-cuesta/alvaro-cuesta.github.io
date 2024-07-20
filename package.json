@@ -1,6 +1,7 @@
 {
   "workspaces": [
     "alvaro-cuesta.github.io",
-    "xenon-ssg"
+    "xenon-ssg",
+    "xenon-ssg-express"
   ]
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Link } from "../ui/Link";
 import { Icon } from "../ui/Icon";
 import { Template } from "../Template";
@@ -26,9 +26,13 @@ const Project: React.FC<ProjectProps> = ({
   );
 };
 
-export const Homepage: React.FC = () => {
+export type HomepageProps = {
+  injectable?: ReactNode[];
+};
+
+export const Homepage: React.FC<HomepageProps> = (props) => {
   return (
-    <Template>
+    <Template injectable={props.injectable}>
       <section>
         <h2>Full-stack software engineer</h2>
         <p>

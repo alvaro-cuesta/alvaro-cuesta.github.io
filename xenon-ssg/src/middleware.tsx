@@ -4,11 +4,12 @@ import { canonicalizeHref } from "./url";
 import { Root } from "./Root";
 // TODO: Make this a generic middleware and not Express-specific (if such a thing exists)
 import type { Request, Response, NextFunction } from "express";
+import { XenonRenderFunction } from ".";
 
 const doNothing = () => {};
 
 export const makeXenonMiddleware =
-  (render: (pathname: string) => ReactNode, options?: RenderToStreamOptions) =>
+  (render: XenonRenderFunction, options?: RenderToStreamOptions) =>
   (req: Request, res: Response, next: NextFunction) => {
     const { pathname } = canonicalizeHref(req.path);
 
