@@ -1,7 +1,5 @@
 import { renderSite } from "./src/site";
 import express from "express";
-import path from "node:path";
-import fs from "node:fs/promises";
 import { makeXenonMiddleware } from "../xenon-ssg/src/middleware";
 import morgan from "morgan";
 import {
@@ -13,7 +11,6 @@ import {
   picoCss,
   staticFolder,
 } from "./config";
-import { transform } from "lightningcss";
 
 const app = express();
 

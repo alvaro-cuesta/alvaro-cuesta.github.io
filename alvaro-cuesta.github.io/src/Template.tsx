@@ -17,6 +17,7 @@ export const Template: React.FC<TemplateProps> = ({ title, children }) => {
       <head>
         <meta charSet="utf-8" />
         <title>{fullTitle}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="darkreader-lock" />
         <link rel="stylesheet" href={picoCss.pathname} />
         <link rel="stylesheet" href={fontAwesomeCss.pathname} />
@@ -45,7 +46,7 @@ export const Template: React.FC<TemplateProps> = ({ title, children }) => {
             </ul>
           </nav>
         </header>
-        {children}
+        <main className="container">{children}</main>
         <footer className="container">
           <nav>
             <ul>

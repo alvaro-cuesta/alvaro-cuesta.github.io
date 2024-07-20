@@ -10,7 +10,6 @@ import {
   picoCss,
   staticFolder,
 } from "./config";
-import { transform } from "lightningcss";
 
 const main = async () => {
   await fs.rm(OUTPUT_FOLDER, {
