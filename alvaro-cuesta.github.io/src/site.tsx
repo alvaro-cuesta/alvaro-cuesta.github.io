@@ -1,6 +1,6 @@
 import React from "react";
-import { Homepage } from "./Homepage";
-import { NotFound } from "./NotFound";
+import { Homepage } from "./pages/Homepage";
+import { NotFound } from "./pages/NotFound";
 
 export const renderSite = (pathname: string) => {
   if (pathname === "/") {

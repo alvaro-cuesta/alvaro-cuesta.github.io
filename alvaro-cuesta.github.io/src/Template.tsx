@@ -1,7 +1,7 @@
 import React from "react";
-import { Link } from "./Link";
+import { Link } from "./ui/Link";
+import { Icon } from "./ui/Icon";
 import { fontAwesomeCss, indexCss, picoCss } from "../config";
-import { Icon } from "./Icon";
 
 type TemplateProps = {
   title?: string;

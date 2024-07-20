@@ -1,7 +1,7 @@
 import React from "react";
-import { Link } from "./Link";
-import { Template } from "./Template";
-import { Icon } from "./Icon";
+import { Link } from "../ui/Link";
+import { Icon } from "../ui/Icon";
+import { Template } from "../Template";
 
 type ProjectProps = {
   name: string;
