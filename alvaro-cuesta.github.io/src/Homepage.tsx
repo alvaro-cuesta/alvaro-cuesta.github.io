@@ -112,8 +112,8 @@ export const Homepage: React.FC = () => {
               name="Xenon SSG"
               codeLink="https://github.com/alvaro-cuesta/alvaro-cuesta.github.io/tree/master/xenon-ssg"
             >
-              A static site generator written in TypeScript. It powers this very
-              website!
+              A React static site generator written in TypeScript. It powers
+              this very website!
             </Project>
 
             <Project
