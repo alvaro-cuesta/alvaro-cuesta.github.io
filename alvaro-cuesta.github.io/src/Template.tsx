@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "./Link";
-import { PICO_FILE } from "../config";
+import { fontAwesomeCss, indexCss, picoCss } from "../config";
 import { Icon } from "./Icon";
 
 type TemplateProps = {
@@ -18,9 +18,9 @@ export const Template: React.FC<TemplateProps> = ({ title, children }) => {
         <meta charSet="utf-8" />
         <title>{fullTitle}</title>
         <meta name="darkreader-lock" />
-        <link rel="stylesheet" href={`/css/pico/${PICO_FILE}`} />
-        <link rel="stylesheet" href="/css/fontawesome/css/all.min.css" />
-        <link rel="stylesheet" href="/css/index.min.css" />
+        <link rel="stylesheet" href={picoCss.pathname} />
+        <link rel="stylesheet" href={fontAwesomeCss.pathname} />
+        <link rel="stylesheet" href={indexCss.pathname} />
       </head>
       <body>
         <header className="container">
