@@ -34,9 +34,14 @@ export const renderToStream = (
   const passthrough = new PassThrough();
 
   if (options.timeoutMsecs !== undefined) {
-    setTimeout(() => {
+    const timeoutHandle = setTimeout(() => {
       abort("Timed out while rendering");
     }, options.timeoutMsecs);
+
+    // @todo do I need to handle errors specially?
+    passthrough.on("close", () => {
+      clearTimeout(timeoutHandle);
+    });
   }
 
   const { pipe, abort } = renderToPipeableStream(reactNode, {
