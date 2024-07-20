@@ -42,7 +42,7 @@ export const Template: React.FC<TemplateProps> = ({
           <nav>
             <ul>
               <li>
-                <h1>
+                <h1 className="marginless">
                   <Link href="/">Álvaro Cuesta</Link>
                 </h1>
               </li>
