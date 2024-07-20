@@ -8,7 +8,7 @@ const STATIC_FOLDER = path.join(__dirname, "static");
 const OUTPUT_FOLDER = path.join(__dirname, "dist");
 
 const main = async () => {
-  await fs.rm(path.join(OUTPUT_FOLDER, "*"), {
+  await fs.rm(OUTPUT_FOLDER, {
     recursive: true,
     force: true,
   });
