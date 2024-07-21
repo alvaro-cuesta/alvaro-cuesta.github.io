@@ -19,6 +19,7 @@ export const singleLightningCssPlugin = ({
 
   // TODO: Do I need cache busting?
   // TODO: Some cache/watch would be nice
+  // TODO: This is currently never 304 unlike express.static
   const compileCss = async () => {
     const code = await fs.readFile(path.join(inputFilepath));
 
