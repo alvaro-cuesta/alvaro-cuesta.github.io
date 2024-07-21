@@ -1,18 +1,17 @@
-import React from "react";
 import { Homepage } from "./pages/Homepage";
 import { NotFound } from "./pages/NotFound";
-import {
+import type {
   XenonExpressRenderMeta,
   XenonExpressSite,
 } from "xenon-ssg-express/src";
-import { DEV_PORT, RENDER_TO_STREAM_OPTIONS } from "../config";
+import { RENDER_TO_STREAM_OPTIONS } from "../config";
 import { staticFilePlugin } from "xenon-ssg-express/src/plugins/static-file";
 import { staticFolderPlugin } from "xenon-ssg-express/src/plugins/static-folder";
 import { singleLightningCssPlugin } from "xenon-ssg-express/src/plugins/single-lightningcss";
 import path from "node:path";
 import { faviconPlugin } from "xenon-ssg-express/src/plugins/favicon";
 import { version } from "../package.json";
-import { PluginInjectableLink } from "xenon-ssg-express/src/plugins/plugins";
+import type { PluginInjectableLink } from "xenon-ssg-express/src/plugins/plugins";
 
 const render = ({
   origin,

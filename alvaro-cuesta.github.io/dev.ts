@@ -1,4 +1,3 @@
-import { DEV_PORT } from "./config";
 import { startXenonExpressDevApp } from "xenon-ssg-express/src/dev";
 import { makeSite } from "./src/site";
 

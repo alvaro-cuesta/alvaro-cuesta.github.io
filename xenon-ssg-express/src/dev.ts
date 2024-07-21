@@ -1,7 +1,7 @@
-import express, { Express } from "express";
+import express, { type Express } from "express";
 import { makeXenonMiddleware } from "xenon-ssg/src/middleware";
 import morgan from "morgan";
-import { XenonExpressSite, makeXenonRenderFromXenonExpressSite } from ".";
+import { type XenonExpressSite, makeXenonRenderFromXenonExpressSite } from ".";
 
 export const DEFAULT_DEV_PORT = 1337;
 

@@ -1,11 +1,11 @@
-import React, { type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Template } from "../Template";
 
 type NotFoundProps = {
   origin: string;
   basepath: string;
   pathname: string;
-  injectable?: ReactNode[];
+  injectable?: ReactNode[] | undefined;
 };
 
 export const NotFound: React.FC<NotFoundProps> = (props) => {

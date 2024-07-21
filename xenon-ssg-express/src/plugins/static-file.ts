@@ -1,7 +1,7 @@
 import path from "node:path";
 import fs from "node:fs/promises";
-import express, { Express } from "express";
-import { PluginReturn } from "./plugins";
+import express, { type Express } from "express";
+import type { PluginReturn } from "./plugins";
 
 type StaticFilePluginOptions = {
   inputFilepath: string;

@@ -1,8 +1,8 @@
 import { renderToPipeableStream } from "react-dom/server";
 import { PassThrough, Readable } from "node:stream";
 import fs from "node:fs/promises";
-import { ReactNode } from "react";
-import { PathLike } from "node:fs";
+import type { ReactNode } from "react";
+import type { PathLike } from "node:fs";
 
 export type RenderToStreamOptions = {
   /**
@@ -45,7 +45,7 @@ export const renderToStream = (
   }
 
   const { pipe, abort } = renderToPipeableStream(reactNode, {
-    onError(error, errorInfo) {
+    onError(error, _errorInfo) {
       // This will get called if `abort` is called while processing a Suspended component
       // TODO: When else does this happen?
       // TODO: Is `errorInfo` ever NOT undefined?

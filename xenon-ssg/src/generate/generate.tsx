@@ -1,11 +1,10 @@
-import React, { ReactNode } from "react";
-import { RenderToStreamOptions, renderToFileAtomic } from "../render";
+import { type RenderToStreamOptions, renderToFileAtomic } from "../render";
 import path from "node:path";
 import fs from "node:fs/promises";
 import { mapIter } from "../iter";
 import { canonicalizeHref } from "../url";
 import { Root } from "../Root";
-import { XenonRenderFunction } from "..";
+import type { XenonRenderFunction } from "..";
 
 const FAKE_BASE_URL =
   "https://www.fakeorigin.if-this-collides-with-a-real-url-im-gonna-be-surprised.example.com";

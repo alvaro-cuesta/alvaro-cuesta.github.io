@@ -1,6 +1,6 @@
-import { RenderToStreamOptions } from "xenon-ssg/src/render";
-import { PluginInjectableTag, PluginReturn } from "./plugins/plugins";
-import React, { type ReactNode } from "react";
+import type { RenderToStreamOptions } from "xenon-ssg/src/render";
+import type { PluginInjectableTag, PluginReturn } from "./plugins/plugins";
+import type { ReactNode } from "react";
 import { DEFAULT_DEV_PORT } from "./dev";
 
 export type XenonExpressRenderMeta = {
@@ -52,9 +52,9 @@ export const makeXenonRenderFromXenonExpressSite = (site: XenonExpressSite) => {
   });
 
   const origin =
-    process.env.XENON_ORIGIN ??
+    process.env["XENON_ORIGIN"] ??
     `http://localhost:${site.devPort ?? DEFAULT_DEV_PORT}`;
-  const basepath = process.env.XENON_BASE_PATH ?? "";
+  const basepath = process.env["XENON_BASE_PATH"] ?? "";
 
   return (pathname: string) =>
     site.render({ origin, basepath, pathname, injectableRaw, injectable });

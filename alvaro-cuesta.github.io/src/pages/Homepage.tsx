@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Link } from "../ui/Link";
 import { Icon } from "../ui/Icon";
 import { Template } from "../Template";
@@ -31,7 +31,7 @@ export type HomepageProps = {
   basepath: string;
   pathname: string;
   defaultOgImage: string;
-  injectable?: ReactNode[];
+  injectable?: ReactNode[] | undefined;
 };
 
 export const Homepage: React.FC<HomepageProps> = (props) => {

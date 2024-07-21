@@ -8,8 +8,8 @@ export type PluginInjectableStylesheet = {
 export type PluginInjectableLink = {
   type: "link";
   rel: string;
-  sizes?: string;
-  media?: string;
+  sizes?: string | undefined;
+  media?: string | undefined;
   href: string;
 };
 
@@ -40,5 +40,5 @@ export type PluginReturn = {
    *
    * For example, a CSS file can be injected into the HTML head.
    */
-  injectable?: PluginInjectableTag[];
+  injectable?: PluginInjectableTag[] | undefined;
 };

@@ -1,8 +1,8 @@
-import { Express } from "express";
+import type { Express } from "express";
 import { transform } from "lightningcss";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { PluginReturn } from "./plugins";
+import type { PluginReturn } from "./plugins";
 
 type SingleLightningCssPluginOptions = {
   inputFilepath: string;
@@ -38,7 +38,7 @@ export const singleLightningCssPlugin = ({
   };
 
   const attachToExpress = (app: Express) => {
-    app.get(pathname, async (req, res) => {
+    app.get(pathname, async (_req, res) => {
       const code = await compileCss();
       res.status(200).contentType("css").end(code);
     });

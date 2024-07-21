@@ -1,6 +1,6 @@
-import { Express } from "express";
+import type { Express } from "express";
 import favicons, { type FaviconOptions } from "favicons";
-import { PluginReturn } from "./plugins";
+import type { PluginReturn } from "./plugins";
 import path from "node:path";
 import fs from "node:fs/promises";
 import { getFileHash } from "../crypto";
@@ -15,10 +15,10 @@ const parseHtmlTag = (tag: string) => {
   if (linkResult !== null) {
     return {
       type: "link" as const,
-      rel: linkResult.groups!.rel,
-      sizes: linkResult.groups!.sizes,
-      media: linkResult.groups!.media,
-      href: linkResult.groups!.href,
+      rel: linkResult.groups!["rel"]!, // `!` is fine because it's marked as non-optional group in the regex
+      sizes: linkResult.groups!["sizes"],
+      media: linkResult.groups!["media"],
+      href: linkResult.groups!["href"]!, // `!` is fine because it's marked as non-optional group in the regex
     };
   }
 
@@ -26,8 +26,8 @@ const parseHtmlTag = (tag: string) => {
   if (metaResult !== null) {
     return {
       type: "meta" as const,
-      name: metaResult.groups!.name,
-      content: metaResult.groups!.content,
+      name: metaResult.groups!["name"]!, // `!` is fine because it's marked as non-optional group in the regex
+      content: metaResult.groups!["content"]!, // `!` is fine because it's marked as non-optional group in the regex
     };
   }
 
@@ -78,7 +78,7 @@ export const faviconPlugin = async ({
         return;
       }
 
-      const filename = pathFragments[1];
+      const filename = pathFragments[1]!; // `!` is okay because we checked the length
       const content = filesByName[filename];
 
       if (content === undefined) {

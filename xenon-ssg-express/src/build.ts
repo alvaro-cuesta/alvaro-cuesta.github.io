@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { generateStaticSite } from "xenon-ssg/src/generate/generate";
-import { XenonExpressSite, makeXenonRenderFromXenonExpressSite } from ".";
+import { type XenonExpressSite, makeXenonRenderFromXenonExpressSite } from ".";
 
 type BuildXenonSiteOptions = {
   outputDir?: string;

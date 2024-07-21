@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Link } from "./ui/Link";
 import { Icon } from "./ui/Icon";
 
@@ -7,7 +7,7 @@ type TemplateProps = {
   basepath: string;
   pathname: string;
   title?: string;
-  injectable?: ReactNode[];
+  injectable?: ReactNode[] | undefined;
   metaTags?: ReactNode;
   children: React.ReactNode;
 };

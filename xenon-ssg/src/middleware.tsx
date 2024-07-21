@@ -1,10 +1,9 @@
-import React, { ReactNode } from "react";
-import { RenderToStreamOptions, renderToStream } from "./render";
+import { type RenderToStreamOptions, renderToStream } from "./render";
 import { canonicalizeHref } from "./url";
 import { Root } from "./Root";
 // TODO: Make this a generic middleware and not Express-specific (if such a thing exists)
 import type { Request, Response, NextFunction } from "express";
-import { XenonRenderFunction } from ".";
+import type { XenonRenderFunction } from ".";
 
 const doNothing = () => {};
 

@@ -1,4 +1,4 @@
-import React, { ComponentPropsWithoutRef } from "react";
+import React, { type ComponentPropsWithoutRef } from "react";
 import { useAddLink } from "./LinkContext";
 
 type LinkProps = ComponentPropsWithoutRef<"a">;
