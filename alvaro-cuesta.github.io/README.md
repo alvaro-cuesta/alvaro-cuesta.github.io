@@ -23,3 +23,4 @@
 - Turn homepage into MDX?
 - RSS?
 - Add global "last published/updated/whatever" meta tag on build
+- Test in CI

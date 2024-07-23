@@ -20,33 +20,37 @@ const { use, reset } = suspendablePromiseMaker(
           const rawModule = await import(fileUrl.toString());
           const module = parseBlogItemModuleFromImportModule(
             filename,
-            rawModule
+            rawModule,
           );
 
           return {
             filename,
             module,
           };
-        })
+        }),
     );
 
     const filteredImportedItems = importedItems.filter(
-      (item) => process.env["NODE_ENV"] === "development" || !item.module.draft
+      (item) => process.env["NODE_ENV"] === "development" || !item.module.draft,
     );
 
     return analyzeBlogItems(filteredImportedItems);
   },
   {
     lazy: true,
-  }
+  },
 );
 
-const startWatch = async () => {
-  for await (const _ of fs.watch(blogFolderPath)) {
-    reset();
-  }
-};
+// Watch blog folder for changes. This is needed because `tsx` already detects changes in the import chain, but not if
+// files are added or removed.
+if (process.env["NODE_ENV"] === "development") {
+  const startWatch = async () => {
+    for await (const _ of fs.watch(blogFolderPath)) {
+      reset();
+    }
+  };
 
-startWatch();
+  startWatch();
+}
 
 export const useBlogItems = use;
