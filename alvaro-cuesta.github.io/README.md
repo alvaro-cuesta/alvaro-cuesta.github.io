@@ -1,5 +1,7 @@
 # https://alvaro-cuesta.github.io
 
+[![Deploy to GitHub Pages](https://github.com/alvaro-cuesta/alvaro-cuesta.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/alvaro-cuesta/alvaro-cuesta.github.io/actions/workflows/deploy.yml)
+
 ## TODO
 
 - Maybe use FontAwesome React packages? Or my own icon but ensure it behaves the same (I think their
