@@ -59,3 +59,93 @@ article > header {
     --pico-color: var(--pico-color);
   }
 }
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--pico-grid-column-gap);
+}
+
+.flex-responsive {
+  display: flex;
+  gap: var(--pico-grid-column-gap);
+}
+
+@media (max-width: 768px) {
+  .flex-responsive {
+    flex-direction: column;
+    gap: var(--pico-grid-row-gap);
+  }
+}
+
+.bloglist-main {
+  flex-grow: 1;
+}
+
+nav[aria-label="breadcrumb"] li {
+  padding-top: 0;
+}
+
+nav[aria-label="breadcrumb"] li :where(a, [role="link"]):not(:hover) {
+  text-decoration: var(--pico-text-decoration);
+  text-decoration-color: var(--pico-underline);
+  text-underline-offset: 0.125em;
+}
+
+ul.blog-sidebar {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+ul.blog-sidebar li {
+  list-style: none;
+}
+
+ul.blog-sidebar :where(a, [role="link"]):not(:hover) {
+  text-decoration: none;
+}
+
+.no-underline :where(a, [role="link"]):not(:hover),
+.no-underline:where(a, [role="link"]):not(:hover) {
+  text-decoration: none;
+}
+
+.autolink-heading {
+  position: relative;
+}
+
+.autolink-link {
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  position: absolute;
+  top: 3px;
+  left: -1.5em; /* -1em - paddin-left - padding-right */
+  padding: 0 0.25em;
+
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  font-size: 0.625rem;
+  text-decoration: none;
+}
+
+.autolink-link:not(:hover) {
+  text-decoration: none;
+}
+
+.autolink-heading:hover .autolink-link {
+  opacity: 1;
+}
+
+.icon-field {
+  display: flex;
+  align-items: center;
+  gap: 0.2em;
+}
+
+.icon-field :where(.fa, .fas, .fab) {
+  font-size: 0.75em;
+  margin-left: 0.2em;
+}

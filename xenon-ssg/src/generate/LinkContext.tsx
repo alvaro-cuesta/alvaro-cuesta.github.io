@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type ReactNode } from "react";
 
 type AddLink = (href: string) => void;
 
@@ -12,7 +12,7 @@ export type LinkProviderProps = {
   /**
    * The children to render.
    */
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 /**

@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alvaro-cuesta/xenon-ssg-express.git"
+    "url": "git+https://github.com/alvaro-cuesta/xenon-ssg.git"
   },
   "keywords": [
     "xenon",

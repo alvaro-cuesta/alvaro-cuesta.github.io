@@ -1,26 +1,31 @@
 import { type ReactNode } from "react";
-import { Link } from "./ui/Link";
-import { Icon } from "./ui/Icon";
+import cx from "classnames";
+import { Link } from "./atoms/Link";
+import { Icon } from "./atoms/Icon";
+import { useBlogItems } from "../blog/promise";
+import type { SiteRenderMeta } from "../site";
 
 type TemplateProps = {
-  origin: string;
-  basepath: string;
-  pathname: string;
+  siteRenderMeta: SiteRenderMeta;
+  canonicalPathname?: string;
+  canonicalUrl?: string;
   title?: string;
-  injectable?: ReactNode[] | undefined;
   metaTags?: ReactNode;
-  children: React.ReactNode;
+  mainClassName?: string;
+  children?: ReactNode;
 };
 
 export const Template: React.FC<TemplateProps> = ({
-  origin,
-  basepath,
-  pathname,
+  siteRenderMeta,
+  canonicalPathname = siteRenderMeta.pathname,
+  canonicalUrl = `${siteRenderMeta.origin}${siteRenderMeta.basepath}${canonicalPathname}`,
   title,
-  injectable,
   metaTags,
+  mainClassName,
   children,
 }) => {
+  const blogItems = useBlogItems();
+
   const fullTitle = title ? `${title} | Álvaro Cuesta` : "Álvaro Cuesta";
   const year = new Date().getFullYear();
 
@@ -32,9 +37,13 @@ export const Template: React.FC<TemplateProps> = ({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
         <meta name="darkreader-lock" />
-        {injectable}
-        <meta property="og:site_name" content="Álvaro Cuesta" />
-        <meta property="og:url" content={`${origin}${basepath}${pathname}`} />
+        {siteRenderMeta.injectable}
+        <meta
+          property="og:site_name"
+          content="Álvaro Cuesta's personal website"
+        />
+        <meta property="og:url" content={canonicalUrl} />
+        <link rel="canonical" href={canonicalUrl} />
         {metaTags}
       </head>
       <body>
@@ -57,10 +66,15 @@ export const Template: React.FC<TemplateProps> = ({
               <li>
                 <Link href="/#projects">Projects</Link>
               </li>
+              {blogItems.all.length > 0 ? (
+                <li>
+                  <Link href="/blog">Blog</Link>
+                </li>
+              ) : null}
             </ul>
           </nav>
         </header>
-        <main className="container">{children}</main>
+        <main className={cx("container", mainClassName)}>{children}</main>
         <footer className="container">
           <nav>
             <ul>

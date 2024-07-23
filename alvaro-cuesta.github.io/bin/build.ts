@@ -1,5 +1,5 @@
-import { makeSite } from "./src/site";
-import { OUTPUT_FOLDER } from "./config";
+import { makeSite } from "../src/site";
+import { OUTPUT_FOLDER } from "../config";
 import { buildXenonExpressSite } from "xenon-ssg-express/src/build";
 
 const main = async () => {

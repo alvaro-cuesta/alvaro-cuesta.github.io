@@ -21,13 +21,12 @@ export const Link: React.FC<LinkProps> = ({
   return (
     <XenonLink
       {...props}
-      target={props.target ?? calculatedIsExternal ? "_blank" : undefined}
+      target={(props.target ?? calculatedIsExternal) ? "_blank" : undefined}
       rel={calculatedIsExternal ? "noopener noreferrer" : undefined}
     >
       {children}
       {calculatedIsExternal && !hideExternalIcon ? (
         <Icon
-          collection="fas"
           name="external-link-alt"
           className="small-sup"
           aria-label=" (opens in new tab)"
