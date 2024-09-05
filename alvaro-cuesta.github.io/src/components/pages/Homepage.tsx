@@ -135,7 +135,7 @@ export const Homepage: React.FC<HomepageProps> = ({ siteRenderMeta }) => (
         <Project
           name="Instant Trivia"
           codeLink="https://github.com/alvaro-cuesta/instant-trivia"
-          liveLink="https://trivia.kaod.me"
+          liveLink="https://trivia.cuesta.dev"
         >
           A fast trivia game.
         </Project>
@@ -152,7 +152,7 @@ export const Homepage: React.FC<HomepageProps> = ({ siteRenderMeta }) => (
         <Project
           name="Lambda Musika"
           codeLink="https://github.com/alvaro-cuesta/lambda-musika"
-          liveLink="https://lambda.kaod.me"
+          liveLink="https://lambda.cuesta.dev"
         >
           A live-coding environment for procedural music generation.
         </Project>
