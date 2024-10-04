@@ -26,7 +26,7 @@ export type SiteRenderMeta = XenonExpressRenderMeta & {
 const render = (renderMeta: XenonExpressRenderMeta) => {
   const defaultOgImageHref = renderMeta.injectableRaw?.find(
     (tag): tag is PluginInjectableLink =>
-      tag.type === "link" &&
+      tag.tagType === "link" &&
       tag.rel === "apple-touch-icon" &&
       tag.sizes === "1024x1024",
   )?.href;
@@ -130,7 +130,6 @@ export const fontawesomeWebfontsFolder = staticFolderPlugin({
 const STATIC_FOLDER = path.join(__dirname, "..", "static");
 export const staticFolder = staticFolderPlugin({
   inputFolder: STATIC_FOLDER,
-  mountPointFragments: ["/"],
 });
 
 const INDEX_CSS_PATH = path.join(__dirname, "index.css");

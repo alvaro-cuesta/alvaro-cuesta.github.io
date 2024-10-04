@@ -1,7 +1,11 @@
 import express, { type Express } from "express";
 import { makeXenonMiddleware } from "xenon-ssg/src/middleware";
 import morgan from "morgan";
-import { type XenonExpressSite, makeXenonRenderFromXenonExpressSite } from ".";
+import {
+  type XenonExpressSite,
+  getSiteMeta,
+  makeXenonRenderFromXenonExpressSite,
+} from ".";
 
 export const DEFAULT_DEV_PORT = 1337;
 
@@ -13,15 +17,18 @@ export const makeXenonDevExpressApp = (site: XenonExpressSite): Express => {
 
   app.use(morgan("dev"));
 
-  for (const plugins of site.plugins) {
-    plugins.attachToExpress(app);
+  const siteMeta = getSiteMeta(site);
+  const plugins = site.plugins.map((plugin) => plugin(siteMeta));
+
+  for (const plugin of plugins) {
+    plugin.attachToExpress(app);
   }
 
   app.use(
     makeXenonMiddleware(
       makeXenonRenderFromXenonExpressSite(site),
-      site.renderToStreamOptions
-    )
+      site.renderToStreamOptions,
+    ),
   );
 
   return app;

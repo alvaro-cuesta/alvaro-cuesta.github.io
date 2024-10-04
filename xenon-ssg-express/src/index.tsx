@@ -1,33 +1,46 @@
 import type { RenderToStreamOptions } from "xenon-ssg/src/render";
-import type { PluginInjectableTag, PluginReturn } from "./plugins/plugins";
+import type { PluginInjectableTag, Plugin } from "./plugins/plugins";
 import type { ReactNode } from "react";
 import { DEFAULT_DEV_PORT } from "./dev";
 
-export type XenonExpressRenderMeta = {
+export type XenonExpressSiteMeta = {
   origin: string;
   basepath: string;
+};
+
+export type XenonExpressRenderMeta = XenonExpressSiteMeta & {
   pathname: string;
-  injectableRaw?: PluginInjectableTag[];
-  injectable?: ReactNode[];
+  injectableRaw: PluginInjectableTag[];
+  injectable: ReactNode[];
 };
 
 export type XenonExpressRenderFunction = (
-  meta: XenonExpressRenderMeta
+  meta: XenonExpressRenderMeta,
 ) => ReactNode;
 
 export type XenonExpressSite = {
   render: XenonExpressRenderFunction;
   renderToStreamOptions: RenderToStreamOptions;
-  plugins: PluginReturn[];
+  plugins: Plugin[];
   devPort?: number;
 };
 
+export const getSiteMeta = (site: XenonExpressSite) => ({
+  origin:
+    process.env["XENON_ORIGIN"] ??
+    `http://localhost:${site.devPort ?? DEFAULT_DEV_PORT}`,
+  basepath: process.env["XENON_BASE_PATH"] ?? "",
+});
+
 export const makeXenonRenderFromXenonExpressSite = (site: XenonExpressSite) => {
-  const injectableRaw = site.plugins.flatMap(
-    (plugin) => plugin.injectable ?? []
-  );
+  const siteMeta = getSiteMeta(site);
+
+  const plugins = site.plugins.flatMap((plugin) => plugin(siteMeta));
+
+  const injectableRaw = plugins.flatMap((plugin) => plugin.injectable ?? []);
+
   const injectable = injectableRaw?.map((tag, index) => {
-    switch (tag.type) {
+    switch (tag.tagType) {
       case "stylesheet":
         return <link key={index} rel="stylesheet" href={tag.href} />;
 
@@ -36,6 +49,8 @@ export const makeXenonRenderFromXenonExpressSite = (site: XenonExpressSite) => {
           <link
             key={index}
             rel={tag.rel}
+            type={tag.type}
+            title={tag.title}
             sizes={tag.sizes}
             media={tag.media}
             href={tag.href}
@@ -51,11 +66,6 @@ export const makeXenonRenderFromXenonExpressSite = (site: XenonExpressSite) => {
     }
   });
 
-  const origin =
-    process.env["XENON_ORIGIN"] ??
-    `http://localhost:${site.devPort ?? DEFAULT_DEV_PORT}`;
-  const basepath = process.env["XENON_BASE_PATH"] ?? "";
-
   return (pathname: string) =>
-    site.render({ origin, basepath, pathname, injectableRaw, injectable });
+    site.render({ ...siteMeta, pathname, injectableRaw, injectable });
 };

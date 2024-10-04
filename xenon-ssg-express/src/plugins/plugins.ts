@@ -1,20 +1,23 @@
 import type { Express } from "express";
+import type { XenonExpressSiteMeta } from "..";
 
 export type PluginInjectableStylesheet = {
-  type: "stylesheet";
+  tagType: "stylesheet";
   href: string;
 };
 
 export type PluginInjectableLink = {
-  type: "link";
+  tagType: "link";
   rel: string;
+  type?: string | undefined;
+  title?: string | undefined;
   sizes?: string | undefined;
   media?: string | undefined;
   href: string;
 };
 
 export type PluginInjectableMeta = {
-  type: "meta";
+  tagType: "meta";
   name: string;
   content: string;
 };
@@ -24,7 +27,7 @@ export type PluginInjectableTag =
   | PluginInjectableLink
   | PluginInjectableMeta;
 
-export type PluginReturn = {
+export type Plugin = (siteMeta: XenonExpressSiteMeta) => {
   /**
    * Attaches the plugin to Express during `dev` mode.
    */

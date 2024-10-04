@@ -1,7 +1,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { generateStaticSite } from "xenon-ssg/src/generate/generate";
-import { type XenonExpressSite, makeXenonRenderFromXenonExpressSite } from ".";
+import {
+  type XenonExpressSite,
+  getSiteMeta,
+  makeXenonRenderFromXenonExpressSite,
+} from ".";
 
 type BuildXenonSiteOptions = {
   outputDir?: string;
@@ -16,7 +20,7 @@ export const buildXenonExpressSite = async (
   {
     outputDir = path.join(process.cwd(), "dist"),
     entryPaths = ["/"],
-  }: BuildXenonSiteOptions = {}
+  }: BuildXenonSiteOptions = {},
 ) => {
   await fs.rm(outputDir, {
     recursive: true,
@@ -33,9 +37,12 @@ export const buildXenonExpressSite = async (
 
   console.debug("\nRunning plugins:");
 
+  const siteMeta = getSiteMeta(site);
+  const plugins = site.plugins.map((plugin) => plugin(siteMeta));
+
   // This must be in reverse order of middleware in dev.ts to ensure the same priority in case a file is overriden by
   // mistake. Unlikely to happen but better have the same behavior to avoid confusing differences between build and dev.
-  const reversePlugins = site.plugins.slice().reverse();
+  const reversePlugins = plugins.slice().reverse();
 
   for (const plugin of reversePlugins) {
     await plugin.build(outputDir);
