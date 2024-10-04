@@ -6,4 +6,7 @@ You are probably interested in one of these packages:
 
 - [xenon-ssg](./xenon-ssg/) — A React static site generator written in TypeScript. It powers this very website!
 
+- [xenon-ssg-express](./xenon-ssg-express) — Express layer for Xenon SSG. Provides `dev` mode and some reusable plugins
+  to have a bit more functionality over the barebones SSG.
+
 - [alvaro-cuesta.github.io](./alvaro-cuesta.github.io/) — The actual source code for my website at https://alvaro.cuesta.dev
