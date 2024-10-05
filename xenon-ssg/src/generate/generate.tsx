@@ -111,10 +111,8 @@ export const generateStaticSite = async (
 
     await renderToFileAtomic(
       fullFilePath,
-      // A top-level suspense will help in case the user tries to use suspense features while not
-      // providing their own suspense boundary
       <Root addLink={addLink}>{renderFn(pathname)}</Root>,
-      renderToStreamOptions
+      renderToStreamOptions,
     );
   }
 };
