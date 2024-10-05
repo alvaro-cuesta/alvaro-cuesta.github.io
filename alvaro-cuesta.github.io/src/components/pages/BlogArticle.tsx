@@ -3,22 +3,19 @@ import { Link } from "../atoms/Link";
 import { BlogListsLayout } from "../molecules/BlogListsLayout";
 import { useBlogItems } from "../../blog/promise";
 import React from "react";
-import { MDX_DEFAULT_COMPONENTS } from "../../mdx/mdx";
 import {
   blogItemDateToUTCISO8601Z,
   equalsBlogItemDates,
 } from "../../blog/item-dates";
-import { BlogArticleTableOfContents } from "../molecules/BlogArticleTableOfContents";
 import type { SiteRenderMeta } from "../../site";
 import { BlogDateTime } from "../atoms/BlogDateTime";
 import { Icon } from "../atoms/Icon";
+import { BlogArticleContent } from "../molecules/BlogArticleContent";
 
 type BlogArticleProps = {
   siteRenderMeta: SiteRenderMeta;
   slug: string;
 };
-
-const TOC_PERMALINK_ID = "toc";
 
 export const BlogArticle: React.FC<BlogArticleProps> = ({
   siteRenderMeta,
@@ -39,9 +36,6 @@ export const BlogArticle: React.FC<BlogArticleProps> = ({
       lastModificationDate: lastModificationDateRaw,
       draft,
       tags,
-      Component,
-      showTableOfContents,
-      tableOfContents,
     },
   } = article;
 
@@ -119,30 +113,7 @@ export const BlogArticle: React.FC<BlogArticleProps> = ({
           )}
         </header>
 
-        {showTableOfContents ? (
-          <section>
-            {/* Make sure this matches `rehypeAutolinkHeadings` */}
-            <h3 id={TOC_PERMALINK_ID} className="autolink-heading">
-              Table of contents
-              <a
-                className="autolink-link"
-                aria-label="(permalink)"
-                href={`#${TOC_PERMALINK_ID}`}
-              >
-                <span className="fas fa-link autolink-icon"></span>
-              </a>
-            </h3>
-
-            <BlogArticleTableOfContents
-              tableOfContents={tableOfContents}
-              depth={0}
-            />
-          </section>
-        ) : null}
-
-        <section>
-          <Component components={MDX_DEFAULT_COMPONENTS} />
-        </section>
+        <BlogArticleContent article={article} />
 
         {lastModificationDate ? (
           <footer>
