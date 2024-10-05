@@ -42,7 +42,7 @@ export const buildXenonExpressSite = async (
 
   // This must be in reverse order of middleware in dev.ts to ensure the same priority in case a file is overriden by
   // mistake. Unlikely to happen but better have the same behavior to avoid confusing differences between build and dev.
-  const reversePlugins = plugins.slice().reverse();
+  const reversePlugins = plugins.filter((x) => x !== undefined).reverse();
 
   for (const plugin of reversePlugins) {
     await plugin.build(outputDir);

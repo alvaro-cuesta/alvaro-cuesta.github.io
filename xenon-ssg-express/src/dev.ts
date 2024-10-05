@@ -18,7 +18,9 @@ export const makeXenonDevExpressApp = (site: XenonExpressSite): Express => {
   app.use(morgan("dev"));
 
   const siteMeta = getSiteMeta(site);
-  const plugins = site.plugins.map((plugin) => plugin(siteMeta));
+  const plugins = site.plugins
+    .map((plugin) => plugin(siteMeta))
+    .filter((x) => x !== undefined);
 
   for (const plugin of plugins) {
     plugin.attachToExpress(app);

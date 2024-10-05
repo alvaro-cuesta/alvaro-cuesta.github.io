@@ -27,21 +27,27 @@ export type PluginInjectableTag =
   | PluginInjectableLink
   | PluginInjectableMeta;
 
-export type Plugin = (siteMeta: XenonExpressSiteMeta) => {
-  /**
-   * Attaches the plugin to Express during `dev` mode.
-   */
-  attachToExpress: (app: Express) => void;
+/**
+ * Can return `undefined` if the plugin doesn't need to do anything. Useful if you want to disable the plugin with some
+ * specific options for example.
+ */
+export type Plugin = (siteMeta: XenonExpressSiteMeta) =>
+  | {
+      /**
+       * Attaches the plugin to Express during `dev` mode.
+       */
+      attachToExpress: (app: Express) => void;
 
-  /**
-   * Builds the plugin during `build` mode.
-   */
-  build: (baseOutputFolder: string) => Promise<void>;
+      /**
+       * Builds the plugin during `build` mode.
+       */
+      build: (baseOutputFolder: string) => Promise<void>;
 
-  /**
-   * Injectable tags that can be used by the plugin.
-   *
-   * For example, a CSS file can be injected into the HTML head.
-   */
-  injectable?: PluginInjectableTag[] | undefined;
-};
+      /**
+       * Injectable tags that can be used by the plugin.
+       *
+       * For example, a CSS file can be injected into the HTML head.
+       */
+      injectable?: PluginInjectableTag[] | undefined;
+    }
+  | undefined;

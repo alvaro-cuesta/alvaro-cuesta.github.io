@@ -35,7 +35,9 @@ export const getSiteMeta = (site: XenonExpressSite) => ({
 export const makeXenonRenderFromXenonExpressSite = (site: XenonExpressSite) => {
   const siteMeta = getSiteMeta(site);
 
-  const plugins = site.plugins.flatMap((plugin) => plugin(siteMeta));
+  const plugins = site.plugins
+    .flatMap((plugin) => plugin(siteMeta))
+    .filter((x) => x !== undefined);
 
   const injectableRaw = plugins.flatMap((plugin) => plugin.injectable ?? []);
 
