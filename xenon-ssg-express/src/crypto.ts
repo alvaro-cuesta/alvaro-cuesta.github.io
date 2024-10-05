@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 
 export const getFileHash = async (
   filepath: string,
-  encoding: crypto.BinaryToTextEncoding
+  encoding: crypto.BinaryToTextEncoding,
 ): Promise<string> => {
   const hash = crypto.createHash("sha256");
   const file = await fs.open(filepath, "r");

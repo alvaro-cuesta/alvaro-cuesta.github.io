@@ -43,10 +43,10 @@ export const BlogYear: React.FC<BlogYearProps> = ({ siteRenderMeta, year }) => {
       a.month === null && b.month === null
         ? 0
         : a.month === null
-        ? 1
-        : b.month === null
-        ? -1
-        : b.month - a.month
+          ? 1
+          : b.month === null
+            ? -1
+            : b.month - a.month,
     );
 
   // TODO: Pagination?

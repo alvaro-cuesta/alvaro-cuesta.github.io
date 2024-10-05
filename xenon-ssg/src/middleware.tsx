@@ -19,7 +19,7 @@ export const makeXenonMiddleware =
       >
         {render(pathname)}
       </Root>,
-      options
+      options,
     );
 
     renderedStream.on("error", (error) => {

@@ -29,7 +29,7 @@ export type RenderToStreamOptions = {
  */
 export const renderToStream = (
   reactNode: ReactNode,
-  options: RenderToStreamOptions = {}
+  options: RenderToStreamOptions = {},
 ): Readable => {
   const passthrough = new PassThrough();
 
@@ -79,7 +79,7 @@ export const renderToStream = (
 const renderToFile = async (
   path: PathLike | fs.FileHandle,
   reactNode: ReactNode,
-  options?: RenderToStreamOptions
+  options?: RenderToStreamOptions,
 ) => {
   const stream = renderToStream(reactNode, options);
   await fs.writeFile(path, stream);
@@ -95,7 +95,7 @@ const renderToFile = async (
 export const renderToFileAtomic = async (
   path: string,
   reactNode: ReactNode,
-  options?: RenderToStreamOptions
+  options?: RenderToStreamOptions,
 ) => {
   const uniqueId = Math.random().toString(36).slice(2);
   const timestamp = Date.now();

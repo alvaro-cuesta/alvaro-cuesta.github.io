@@ -1,5 +1,5 @@
 const FAKE_BASE_URL = new URL(
-  "https://www.fakeorigin.if-this-collides-with-a-real-url-im-gonna-be-surprised.example.com"
+  "https://www.fakeorigin.if-this-collides-with-a-real-url-im-gonna-be-surprised.example.com",
 );
 
 /**
@@ -14,7 +14,7 @@ export const canonicalizeHref = (
    * The base URL to resolve relative URLs. This URL's origin will also be used to determine if the
    * URL is internal or external, i.e. if it points to a different origin.
    */
-  baseUrl: URL = FAKE_BASE_URL
+  baseUrl: URL = FAKE_BASE_URL,
 ): {
   /** The resolved pathname. */
   pathname: string;

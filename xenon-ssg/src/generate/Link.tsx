@@ -18,5 +18,5 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     }
 
     return <a ref={ref} {...props} />;
-  }
+  },
 );

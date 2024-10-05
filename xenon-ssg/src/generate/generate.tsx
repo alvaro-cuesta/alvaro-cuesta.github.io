@@ -49,7 +49,7 @@ export const generateStaticSite = async (
     entryPaths = ["/"],
     outputDir = path.join(process.cwd(), "dist"),
     renderToStreamOptions,
-  }: GenerateStaticSiteOptions = {}
+  }: GenerateStaticSiteOptions = {},
 ) => {
   const pendingRenderPathnames = new Set(
     mapIter(
@@ -58,8 +58,8 @@ export const generateStaticSite = async (
       // duplicate detection works.
       //
       // E.g. ('' -> '/') or ('something/../foo/bar' -> '/foo/bar')
-      (pathname) => new URL(pathname, FAKE_BASE_URL).pathname
-    )
+      (pathname) => new URL(pathname, FAKE_BASE_URL).pathname,
+    ),
   );
   const visitedPasthnames = new Set(pendingRenderPathnames);
 
@@ -71,7 +71,7 @@ export const generateStaticSite = async (
 
     if (!isInternal) {
       throw new Error(
-        `The path ${rawPathname} is not an internal link. Links to external origins are not allowed.`
+        `The path ${rawPathname} is not an internal link. Links to external origins are not allowed.`,
       );
     }
 
@@ -79,8 +79,8 @@ export const generateStaticSite = async (
     const filepath = pathname.endsWith(".html")
       ? pathname
       : pathname.endsWith("/")
-      ? `${pathname}index.html`
-      : `${pathname}/index.html`;
+        ? `${pathname}index.html`
+        : `${pathname}/index.html`;
     const fullFilePath = path.join(outputDir, filepath);
     const fullFilePathDir = path.dirname(fullFilePath);
 
