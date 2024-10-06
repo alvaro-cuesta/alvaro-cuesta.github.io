@@ -3,6 +3,7 @@ import { BlogListsLayout } from "../molecules/BlogListsLayout";
 import { Template } from "../Template";
 import { Link } from "../atoms/Link";
 import type { SiteRenderMeta } from "../../site";
+import { routeBlogTag, routeBlogTagList } from "../../routes";
 
 type BlogTagListProps = {
   siteRenderMeta: SiteRenderMeta;
@@ -28,7 +29,7 @@ export const BlogTagList: React.FC<BlogTagListProps> = ({ siteRenderMeta }) => {
       }
     >
       <BlogListsLayout
-        breadcrumbs={[{ name: "Tags", href: "/blog/tags" }]}
+        breadcrumbs={[{ name: "Tags", href: routeBlogTagList.build({}) }]}
         blogItems={blogItems}
       >
         <h2>Tags</h2>
@@ -36,7 +37,8 @@ export const BlogTagList: React.FC<BlogTagListProps> = ({ siteRenderMeta }) => {
         <ul>
           {blogItems.tagsAscendingAlphabetically.map(({ tag, items }) => (
             <li key={tag}>
-              <Link href={`/blog/tags/${tag}`}>{tag}</Link> ({items.length})
+              <Link href={routeBlogTag.build({ tag })}>{tag}</Link> (
+              {items.length})
             </li>
           ))}
         </ul>

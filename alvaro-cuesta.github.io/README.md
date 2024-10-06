@@ -21,7 +21,6 @@
 - Better dropdown in main page nav
 - Sitemap XML
   - https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap#xml
-- Add Wouter
 - Turn homepage into MDX?
 - RSS?
 - Add global "last published/updated/whatever" meta tag on build

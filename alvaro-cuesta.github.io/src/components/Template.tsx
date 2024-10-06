@@ -4,6 +4,7 @@ import { Link } from "./atoms/Link";
 import { Icon } from "./atoms/Icon";
 import { useBlogItems } from "../blog/promise";
 import type { SiteRenderMeta } from "../site";
+import { routeBlogArticleList, routeHome } from "../routes";
 
 type TemplateProps = {
   siteRenderMeta: SiteRenderMeta;
@@ -52,23 +53,31 @@ export const Template: React.FC<TemplateProps> = ({
             <ul>
               <li>
                 <h1 className="marginless">
-                  <Link href="/">Álvaro Cuesta</Link>
+                  <Link href={routeHome.build({})}>Álvaro Cuesta</Link>
                 </h1>
               </li>
             </ul>
             <ul>
               <li>
-                <Link href="/#technologies">Tech</Link>
+                <Link href={routeHome.build({}, { hash: "technologies" })}>
+                  Tech
+                </Link>
               </li>
               <li>
-                <Link href="/#knowledge">Knowledge</Link>
+                <Link href={routeHome.build({}, { hash: "knowledge" })}>
+                  Knowledge
+                </Link>
               </li>
               <li>
-                <Link href="/#projects">Projects</Link>
+                <Link href={routeHome.build({}, { hash: "projects" })}>
+                  Projects
+                </Link>
               </li>
               {blogItems.all.length > 0 ? (
                 <li>
-                  <Link href="/blog">Blog</Link>
+                  <Link href={routeBlogArticleList.build({ page: null })}>
+                    Blog
+                  </Link>
                 </li>
               ) : null}
             </ul>
@@ -79,7 +88,7 @@ export const Template: React.FC<TemplateProps> = ({
           <nav>
             <ul>
               <li>
-                © {year} <Link href="/">Álvaro Cuesta</Link>
+                © {year} <Link href={routeHome.build({})}>Álvaro Cuesta</Link>
               </li>
             </ul>
             <ul>

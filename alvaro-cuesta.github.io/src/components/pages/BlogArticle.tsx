@@ -11,6 +11,7 @@ import type { SiteRenderMeta } from "../../site";
 import { BlogDateTime } from "../atoms/BlogDateTime";
 import { Icon } from "../atoms/Icon";
 import { BlogArticleContent } from "../molecules/BlogArticleContent";
+import { routeBlogArticle, routeBlogTag } from "../../routes";
 
 type BlogArticleProps = {
   siteRenderMeta: SiteRenderMeta;
@@ -49,6 +50,8 @@ export const BlogArticle: React.FC<BlogArticleProps> = ({
     ? blogItemDateToUTCISO8601Z(lastModificationDate)
     : null;
 
+  const articlePath = routeBlogArticle.build({ slug });
+
   return (
     <Template
       siteRenderMeta={siteRenderMeta}
@@ -82,13 +85,13 @@ export const BlogArticle: React.FC<BlogArticleProps> = ({
       }
     >
       <BlogListsLayout
-        breadcrumbs={[{ name: title, href: `/blog/${slug}` }]}
+        breadcrumbs={[{ name: title, href: articlePath }]}
         blogItems={blogItems}
       >
         <header>
           <div>
             <h2 className="no-underline">
-              <Link href={`/blog/${slug}`}>{title}</Link>
+              <Link href={articlePath}>{title}</Link>
               {draft ? " (draft)" : ""}
             </h2>
           </div>
@@ -105,7 +108,7 @@ export const BlogArticle: React.FC<BlogArticleProps> = ({
                 {tags.map((tag, index) => (
                   <React.Fragment key={tag}>
                     {index > 0 && ", "}
-                    <Link href={`/blog/tags/${tag}`}>{tag}</Link>
+                    <Link href={routeBlogTag.build({ tag })}>{tag}</Link>
                   </React.Fragment>
                 ))}
               </span>

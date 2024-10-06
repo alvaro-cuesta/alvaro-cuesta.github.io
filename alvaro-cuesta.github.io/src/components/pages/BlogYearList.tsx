@@ -3,6 +3,7 @@ import { Template } from "../Template";
 import { BlogListsLayout } from "../molecules/BlogListsLayout";
 import { Link } from "../atoms/Link";
 import type { SiteRenderMeta } from "../../site";
+import { routeBlogYear, routeBlogYearList } from "../../routes";
 
 type BlogYearListProps = {
   siteRenderMeta: SiteRenderMeta;
@@ -30,7 +31,7 @@ export const BlogYearList: React.FC<BlogYearListProps> = ({
       }
     >
       <BlogListsLayout
-        breadcrumbs={[{ name: "Years", href: "/blog/years" }]}
+        breadcrumbs={[{ name: "Years", href: routeBlogYearList.build({}) }]}
         blogItems={blogItems}
       >
         <h2>Years</h2>
@@ -38,7 +39,7 @@ export const BlogYearList: React.FC<BlogYearListProps> = ({
         <ul>
           {blogItems.yearsSortedDescending.map(({ year, data }) => (
             <li key={year}>
-              <Link href={`/blog/years/${year}`}>{year}</Link> (
+              <Link href={routeBlogYear.build({ year })}>{year}</Link> (
               {data.totalCount})
             </li>
           ))}

@@ -4,6 +4,7 @@ import { BlogListsLayout } from "../molecules/BlogListsLayout";
 import { BlogArticleListItem } from "../molecules/BlogArticleListItem";
 import { type BlogItemMonth } from "../../blog/item-dates";
 import type { SiteRenderMeta } from "../../site";
+import { routeBlogYear, routeBlogYearList } from "../../routes";
 
 type BlogYearProps = {
   siteRenderMeta: SiteRenderMeta;
@@ -69,8 +70,8 @@ export const BlogYear: React.FC<BlogYearProps> = ({ siteRenderMeta, year }) => {
     >
       <BlogListsLayout
         breadcrumbs={[
-          { name: "Years", href: "/blog/years" },
-          { name: year.toString(), href: `/blog/years/${year}` },
+          { name: "Years", href: routeBlogYearList.build({}) },
+          { name: year.toString(), href: routeBlogYear.build({ year }) },
         ]}
         blogItems={blogItems}
       >

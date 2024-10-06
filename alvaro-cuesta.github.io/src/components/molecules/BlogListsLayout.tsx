@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { BlogSidebar } from "./BlogSidebar";
 import type { AnalyzedBlogItems } from "../../blog/analyze";
 import { Breadcrumb, type BreadcrumbItem } from "../atoms/Breadcrumb";
+import { routeBlogArticleList } from "../../routes";
 
 type BlogListsLayoutProps = {
   breadcrumbs: BreadcrumbItem[];
@@ -21,7 +22,7 @@ export const BlogListsLayout: React.FC<BlogListsLayoutProps> = ({
           breadcrumbs={[
             {
               name: "Blog",
-              href: "/blog",
+              href: routeBlogArticleList.build({ page: null }),
             },
             ...breadcrumbs,
           ]}

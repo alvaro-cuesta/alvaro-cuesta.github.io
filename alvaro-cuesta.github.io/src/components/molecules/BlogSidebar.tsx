@@ -1,5 +1,11 @@
 import { Link } from "../atoms/Link";
 import type { AnalyzedBlogItems } from "../../blog/analyze";
+import {
+  routeBlogTag,
+  routeBlogTagList,
+  routeBlogYear,
+  routeBlogYearList,
+} from "../../routes";
 
 type BlogSidebarProps = {
   blogItems: AnalyzedBlogItems;
@@ -22,19 +28,20 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({ blogItems }) => {
     <ul className="blog-sidebar">
       {hasTags ? (
         <li>
-          <Link href="/blog/tags">Tags</Link>
+          <Link href={routeBlogTagList.build({})}>Tags</Link>
 
           <ul>
             {tagsDescendingByArticleCount
               .slice(0, MAX_TAGS)
               .map(({ tag, items }) => (
                 <li key={tag}>
-                  <Link href={`/blog/tags/${tag}`}>{tag}</Link> ({items.length})
+                  <Link href={routeBlogTag.build({ tag })}>{tag}</Link> (
+                  {items.length})
                 </li>
               ))}
             {tagsDescendingByArticleCount.length > MAX_TAGS ? (
               <li>
-                <Link href="/blog/tags">More...</Link>
+                <Link href={routeBlogTagList.build({})}>More...</Link>
               </li>
             ) : null}
           </ul>
@@ -42,12 +49,12 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({ blogItems }) => {
       ) : null}
       {hasYears ? (
         <li>
-          <Link href="/blog/years">Years</Link>
+          <Link href={routeBlogYearList.build({})}>Years</Link>
 
           <ul>
             {yearsSortedDescending.map(({ year, data }) => (
               <li key={year}>
-                <Link href={`/blog/years/${year}`}>{year}</Link> (
+                <Link href={routeBlogYear.build({ year })}>{year}</Link> (
                 {data.totalCount})
               </li>
             ))}

@@ -3,6 +3,7 @@ import { Template } from "../Template";
 import { useBlogItems } from "../../blog/promise";
 import { BlogArticleListItem } from "../molecules/BlogArticleListItem";
 import type { SiteRenderMeta } from "../../site";
+import { routeBlogTag, routeBlogTagList } from "../../routes";
 
 type BlogTagProps = {
   siteRenderMeta: SiteRenderMeta;
@@ -38,8 +39,8 @@ export const BlogTag: React.FC<BlogTagProps> = ({ siteRenderMeta, tag }) => {
     >
       <BlogListsLayout
         breadcrumbs={[
-          { name: "Tags", href: "/blog/tags" },
-          { name: tag, href: `/blog/tags/${tag}` },
+          { name: "Tags", href: routeBlogTagList.build({}) },
+          { name: tag, href: routeBlogTag.build({ tag }) },
         ]}
         blogItems={blogItems}
       >

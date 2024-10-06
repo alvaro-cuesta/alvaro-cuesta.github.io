@@ -4,6 +4,7 @@ import { BlogListsLayout } from "../molecules/BlogListsLayout";
 import { useBlogItems } from "../../blog/promise";
 import { BlogArticleListItem } from "../molecules/BlogArticleListItem";
 import type { SiteRenderMeta } from "../../site";
+import { routeBlogArticleList } from "../../routes";
 
 type BlogArticleListProps = {
   siteRenderMeta: SiteRenderMeta;
@@ -28,16 +29,16 @@ export const BlogArticleList: React.FC<BlogArticleListProps> = ({
   const totalPages = blogItems.allSortedByDescendingDateByPage.size;
 
   const prevPageLink = blogItems.allSortedByDescendingDateByPage.has(page - 1)
-    ? page - 1 === 1
-      ? "/blog"
-      : `/blog/page/${page - 1}`
+    ? routeBlogArticleList.build({ page: page - 1 === 1 ? null : page - 1 })
     : null;
   const nextPageLink = blogItems.allSortedByDescendingDateByPage.has(page + 1)
-    ? `/blog/page/${page + 1}`
+    ? routeBlogArticleList.build({ page: page + 1 })
     : null;
 
   // We allow linking to /blog/page/1 for consistency, but we add a canonical link to /blog
-  const canonicalPathname = page === 1 ? "/blog" : `/blog/page/${page}`;
+  const canonicalPathname = routeBlogArticleList.build({
+    page: page === 1 ? null : page,
+  });
 
   return (
     <Template

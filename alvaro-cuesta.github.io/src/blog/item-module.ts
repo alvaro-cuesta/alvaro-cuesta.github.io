@@ -7,6 +7,7 @@ import {
 } from "./item-dates";
 import type { Toc } from "@stefanprobst/rehype-extract-toc";
 import { Temporal } from "temporal-polyfill";
+import { VALID_SLUG_REGEX } from "../utils/slug";
 
 // TODO: Allow strings with the same parsing mechanism as filenames
 type BlogItemModuleDate =
@@ -223,8 +224,6 @@ const unslugify = (slug: string): string => {
     .map((x) => x.charAt(0).toUpperCase() + x.slice(1))
     .join(" ");
 };
-
-const VALID_SLUG_REGEX = /^[a-z0-9-]+$/;
 
 export const parseBlogItemModuleFromImportModule = (
   filename: string,
