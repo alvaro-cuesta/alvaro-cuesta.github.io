@@ -19,7 +19,7 @@ type TemplateProps = {
 export const Template: React.FC<TemplateProps> = ({
   siteRenderMeta,
   canonicalPathname = siteRenderMeta.pathname,
-  canonicalUrl = `${siteRenderMeta.origin}${siteRenderMeta.basepath}${canonicalPathname}`,
+  canonicalUrl = `${siteRenderMeta.baseUrl}${canonicalPathname}`,
   title,
   metaTags,
   mainClassName,

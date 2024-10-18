@@ -32,7 +32,7 @@ const render = (renderMeta: XenonExpressRenderMeta) => {
 
   const siteRenderMeta = {
     ...renderMeta,
-    defaultOgImage: `${renderMeta.origin}${renderMeta.basepath}${defaultOgImageHref}`,
+    defaultOgImage: `${renderMeta.baseUrl}${defaultOgImageHref}`,
   };
 
   return <Root siteRenderMeta={siteRenderMeta} />;

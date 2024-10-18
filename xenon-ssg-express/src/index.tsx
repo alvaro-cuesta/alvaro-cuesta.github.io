@@ -6,6 +6,7 @@ import { DEFAULT_DEV_PORT } from "./dev";
 export type XenonExpressSiteMeta = {
   origin: string;
   basepath: string;
+  baseUrl: string;
 };
 
 export type XenonExpressRenderMeta = XenonExpressSiteMeta & {
@@ -25,12 +26,19 @@ export type XenonExpressSite = {
   devPort?: number;
 };
 
-export const getSiteMeta = (site: XenonExpressSite) => ({
-  origin:
+export const getSiteMeta = (site: XenonExpressSite): XenonExpressSiteMeta => {
+  const origin =
     process.env["XENON_ORIGIN"] ??
-    `http://localhost:${site.devPort ?? DEFAULT_DEV_PORT}`,
-  basepath: process.env["XENON_BASE_PATH"] ?? "",
-});
+    `http://localhost:${site.devPort ?? DEFAULT_DEV_PORT}`;
+
+  const basepath = process.env["XENON_BASE_PATH"] ?? "";
+
+  return {
+    origin,
+    basepath,
+    baseUrl: `${origin}${basepath}`,
+  };
+};
 
 export const makeXenonRenderFromXenonExpressSite = (site: XenonExpressSite) => {
   const siteMeta = getSiteMeta(site);
