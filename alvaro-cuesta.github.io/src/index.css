@@ -164,3 +164,20 @@ blockquote {
   padding-top: var(--pico-block-spacing-vertical);
   border-top: var(--pico-border-width) solid var(--pico-muted-border-color);
 }
+
+/** Fix link behavior inside code blocks */
+:where(a:not([role="button"])),
+[role="link"] {
+  code,
+  kbd,
+  pre {
+    color: var(--pico-color);
+    text-decoration: var(--pico-text-decoration);
+    transition:
+      background-color var(--pico-transition),
+      color var(--pico-transition),
+      text-decoration var(--pico-transition),
+      box-shadow var(--pico-transition),
+      -webkit-text-decoration var(--pico-transition);
+  }
+}
