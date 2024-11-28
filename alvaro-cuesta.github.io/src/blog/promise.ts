@@ -17,7 +17,7 @@ const { use, reset } = suspendablePromiseMaker(
         .filter((filename) => filename.endsWith(".mdx"))
         .map(async (filename) => {
           const fileUrl = new URL(filename, blogFolderUrl);
-          const rawModule = await import(fileUrl.toString());
+          const rawModule = await import(`${fileUrl}?${Date.now()}`);
           const module = parseBlogItemModuleFromImportModule(
             filename,
             rawModule,
