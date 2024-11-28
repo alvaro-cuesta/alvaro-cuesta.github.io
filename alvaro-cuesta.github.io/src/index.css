@@ -156,10 +156,11 @@ blockquote {
 
 .toc-section {
   border-bottom: var(--pico-border-width) solid var(--pico-muted-border-color);
+  margin-bottom: calc(var(--pico-block-spacing-vertical) * 2);
 }
 
 .footnotes {
-  margin-top: var(--pico-spacing);
-  padding-top: var(--pico-spacing);
+  margin-top: calc(var(--pico-block-spacing-vertical) * 2);
+  padding-top: var(--pico-block-spacing-vertical);
   border-top: var(--pico-border-width) solid var(--pico-muted-border-color);
 }
