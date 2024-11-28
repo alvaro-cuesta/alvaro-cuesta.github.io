@@ -35,7 +35,7 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({ blogItems }) => {
               .slice(0, MAX_TAGS)
               .map(({ tag, items }) => (
                 <li key={tag}>
-                  <Link href={routeBlogTag.build({ tag })}>{tag}</Link> (
+                  <Link href={routeBlogTag.build({ tag })}>{tag}</Link>&nbsp;(
                   {items.length})
                 </li>
               ))}
@@ -54,7 +54,7 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({ blogItems }) => {
           <ul>
             {yearsSortedDescending.map(({ year, data }) => (
               <li key={year}>
-                <Link href={routeBlogYear.build({ year })}>{year}</Link> (
+                <Link href={routeBlogYear.build({ year })}>{year}</Link>&nbsp;(
                 {data.totalCount})
               </li>
             ))}
