@@ -20,7 +20,7 @@ export const BlogArticleContent: React.FC<BlogArticleContentProps> = ({
 }) => (
   <>
     {showTableOfContents ? (
-      <section>
+      <section className="toc-section">
         {/* Make sure this matches `rehypeAutolinkHeadings` */}
         <h3 id={TOC_PERMALINK_ID} className="autolink-heading">
           Table of contents
