@@ -186,7 +186,7 @@ blockquote {
   padding: 0 var(--pico-spacing);
 }
 
-.toc-section {
+.toc-section ol {
   ol,
   ul {
     margin-bottom: 0;
