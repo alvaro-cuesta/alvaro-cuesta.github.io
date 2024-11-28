@@ -185,3 +185,10 @@ blockquote {
 .bloglist-main article section {
   padding: 0 var(--pico-spacing);
 }
+
+.toc-section {
+  ol,
+  ul {
+    margin-bottom: 0;
+  }
+}
