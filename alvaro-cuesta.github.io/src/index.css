@@ -150,6 +150,10 @@ ul.blog-sidebar :where(a, [role="link"]):not(:hover) {
   margin-left: 0.2em;
 }
 
+blockquote {
+  padding: 0 var(--pico-spacing);
+}
+
 .toc-section {
   border-bottom: var(--pico-border-width) solid var(--pico-muted-border-color);
 }
