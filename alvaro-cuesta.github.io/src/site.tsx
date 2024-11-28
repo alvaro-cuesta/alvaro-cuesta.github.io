@@ -105,7 +105,6 @@ export const makeSite = async (): Promise<XenonExpressSite> => {
       display: "browser",
       version,
     },
-    mountPointFragments: ["/"],
   });
 
   return {
