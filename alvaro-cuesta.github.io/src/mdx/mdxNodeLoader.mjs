@@ -12,6 +12,9 @@ import withToc from "@stefanprobst/rehype-extract-toc";
 import withTocExport from "@stefanprobst/rehype-extract-toc/mdx";
 
 const hooks = createLoader({
+  remarkRehypeOptions: {
+    footnoteLabelTagName: "h1",
+  },
   rehypePlugins: [
     rehypeKatex,
     [rehypeStarryNight, { grammars: all }],
