@@ -182,7 +182,7 @@ blockquote {
   }
 }
 
-.bloglist-main article section {
+.bloglist-main > article > section {
   padding: 0 var(--pico-spacing);
 }
 
