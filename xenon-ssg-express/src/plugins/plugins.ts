@@ -6,24 +6,6 @@ export type PluginInjectableStylesheet = {
   href: string;
 };
 
-export type PluginInjectablePreload = {
-  tagType: "preload";
-  as:
-    | "audio"
-    | "document"
-    | "embed"
-    | "fetch"
-    | "font"
-    | "image"
-    | "object"
-    | "script"
-    | "style"
-    | "track"
-    | "video"
-    | "worker";
-  href: string;
-};
-
 export type PluginInjectableLink = {
   tagType: "link";
   rel: string;
@@ -42,7 +24,6 @@ export type PluginInjectableMeta = {
 
 export type PluginInjectableTag =
   | PluginInjectableStylesheet
-  | PluginInjectablePreload
   | PluginInjectableLink
   | PluginInjectableMeta;
 
