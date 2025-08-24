@@ -1,6 +1,6 @@
 import type { BlogItem } from "../../blog/item";
 import { MDX_DEFAULT_COMPONENTS } from "../../mdx/mdx";
-import { TableOfContents } from "./TableOfContents";
+import { TableOfContents, type TableOfContentsProps } from "./TableOfContents";
 
 type BlogArticleContentProps = {
   article: BlogItem;
@@ -24,10 +24,13 @@ export const BlogArticleContent: React.FC<BlogArticleContentProps> = ({
         ? {
             components: {
               ...MDX_DEFAULT_COMPONENTS,
-              TableOfContents: () => (
+              TableOfContents: ({
+                enableTopSeparator,
+              }: Omit<TableOfContentsProps, "tableOfContents">) => (
                 <TableOfContents
                   id={DEFAULT_TOC_PERMALINK_ID}
                   tableOfContents={tableOfContents}
+                  enableTopSeparator={enableTopSeparator}
                 />
               ),
             },
