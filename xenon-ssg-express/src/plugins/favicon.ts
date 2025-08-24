@@ -90,7 +90,7 @@ export const faviconPlugin = async ({
     });
   };
 
-  const build = async (baseOutputFolder: string) => {
+  const buildPre = async (baseOutputFolder: string) => {
     const outputFolder = path.join(baseOutputFolder, ...mountPointFragments);
     await fs.mkdir(outputFolder, { recursive: true });
 
@@ -107,11 +107,11 @@ export const faviconPlugin = async ({
     }
   };
 
-  const injectable = html.map(parseHtmlTag);
+  const getInjectable = () => html.map(parseHtmlTag);
 
   return () => ({
     attachToExpress,
-    build,
-    injectable,
+    buildPre,
+    getInjectable,
   });
 };

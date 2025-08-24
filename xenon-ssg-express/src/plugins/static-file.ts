@@ -1,7 +1,8 @@
 import path from "node:path";
 import fs from "node:fs/promises";
 import express, { type Express } from "express";
-import type { PluginInjectableTag, Plugin } from "./plugins";
+import type { Plugin, GetInjectableFunction } from "./plugins";
+import { getCacheBustingHash } from "../utils";
 
 type StaticFilePluginOptions = {
   inputFilepath: string;
@@ -16,16 +17,15 @@ export const staticFilePlugin =
     outputFilename,
     mountPointFragments = [],
     injectAs,
-  }: StaticFilePluginOptions): Plugin =>
+  }: StaticFilePluginOptions): Plugin<string> =>
   () => {
-    // TODO: Do I need cache busting?
     const pathname = `/${[...mountPointFragments, outputFilename].join("/")}`;
 
     const attachToExpress = (app: Express) => {
       app.use(pathname, express.static(inputFilepath));
     };
 
-    const build = async (baseOutputFolder: string) => {
+    const buildPre = async (baseOutputFolder: string) => {
       const outputFolder = path.join(baseOutputFolder, ...mountPointFragments);
       const outputFilepath = path.join(outputFolder, outputFilename);
 
@@ -33,21 +33,25 @@ export const staticFilePlugin =
 
       await fs.mkdir(outputFolder, { recursive: true });
       await fs.cp(inputFilepath, outputFilepath);
+
+      const content = await fs.readFile(inputFilepath);
+
+      return getCacheBustingHash(content);
     };
 
-    const injectable: PluginInjectableTag[] | undefined =
+    const getInjectable: GetInjectableFunction<string> | undefined =
       injectAs === "stylesheet"
-        ? [
+        ? (cachebust) => [
             {
               tagType: "stylesheet" as const,
-              href: pathname,
+              href: cachebust ? `${pathname}?v=${cachebust}` : pathname,
             },
           ]
         : undefined;
 
     return {
       attachToExpress,
-      build,
-      injectable,
+      buildPre,
+      getInjectable,
     };
   };

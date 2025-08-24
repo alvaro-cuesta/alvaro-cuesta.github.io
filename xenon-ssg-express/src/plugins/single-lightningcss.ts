@@ -2,7 +2,8 @@ import type { Express } from "express";
 import { transform } from "lightningcss";
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { PluginInjectableTag, Plugin } from "./plugins";
+import type { Plugin, GetInjectableFunction } from "./plugins";
+import { getCacheBustingHash } from "../utils";
 
 type SingleLightningCssPluginOptions = {
   inputFilepath: string;
@@ -15,11 +16,10 @@ export const singleLightningCssPlugin =
     inputFilepath,
     outputFilename,
     mountPointFragments = [],
-  }: SingleLightningCssPluginOptions): Plugin =>
+  }: SingleLightningCssPluginOptions): Plugin<string> =>
   () => {
     const pathname = `/${[...mountPointFragments, outputFilename].join("/")}`;
 
-    // TODO: Do I need cache busting?
     // TODO: Some cache/watch would be nice
     // TODO: This is currently never 304 unlike express.static
     const compileCss = async () => {
@@ -46,7 +46,7 @@ export const singleLightningCssPlugin =
       });
     };
 
-    const build = async (baseOutputFolder: string) => {
+    const buildPre = async (baseOutputFolder: string) => {
       const outputFolder = path.join(baseOutputFolder, ...mountPointFragments);
       const outputFilepath = path.join(outputFolder, outputFilename);
 
@@ -60,18 +60,20 @@ export const singleLightningCssPlugin =
       ]);
 
       await fs.writeFile(outputFilepath, code);
+
+      return getCacheBustingHash(code);
     };
 
-    const injectable: PluginInjectableTag[] = [
+    const getInjectable: GetInjectableFunction<string> = (cachebust) => [
       {
         tagType: "stylesheet" as const,
-        href: pathname,
+        href: cachebust ? `${pathname}?v=${cachebust}` : pathname,
       },
     ];
 
     return {
       attachToExpress,
-      build,
-      injectable,
+      buildPre,
+      getInjectable,
     };
   };

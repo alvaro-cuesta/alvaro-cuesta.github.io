@@ -1,11 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { generateStaticSite } from "xenon-ssg/src/generate/generate";
-import {
-  type XenonExpressSite,
-  getSiteMeta,
-  makeXenonRenderFromXenonExpressSite,
-} from ".";
+import { type XenonExpressSite, getSiteMeta } from ".";
+import { getTagsFromInjectable } from "./plugins/plugins";
 
 type BuildXenonSiteOptions = {
   outputDir?: string;
@@ -27,25 +24,39 @@ export const buildXenonExpressSite = async (
     force: true,
   });
 
-  console.debug("Generating static site:");
+  const siteMeta = getSiteMeta(site);
+  const plugins = site.plugins
+    .map((plugin) => plugin(siteMeta))
+    .filter((x) => x !== undefined);
 
-  await generateStaticSite(makeXenonRenderFromXenonExpressSite(site), {
+  console.debug("Running plugins (pre):");
+
+  const injectableRaws = await Promise.all(
+    plugins.map(async (runnablePlugin) => {
+      const buildPreResult = await runnablePlugin.buildPre?.(outputDir);
+      return runnablePlugin.getInjectable?.(buildPreResult) ?? [];
+    }),
+  );
+
+  const injectableRaw = injectableRaws.flat();
+
+  const injectable = getTagsFromInjectable(injectableRaw);
+
+  console.debug("\nGenerating static site:");
+
+  const render = (pathname: string) =>
+    site.render({ ...siteMeta, pathname, injectableRaw, injectable });
+
+  await generateStaticSite(render, {
     entryPaths: entryPaths,
     outputDir: outputDir,
     renderToStreamOptions: site.renderToStreamOptions,
   });
 
-  console.debug("\nRunning plugins:");
+  console.debug("\nRunning plugins (post):");
 
-  const siteMeta = getSiteMeta(site);
-  const plugins = site.plugins.map((plugin) => plugin(siteMeta));
-
-  // This must be in reverse order of middleware in dev.ts to ensure the same priority in case a file is overriden by
-  // mistake. Unlikely to happen but better have the same behavior to avoid confusing differences between build and dev.
-  const reversePlugins = plugins.filter((x) => x !== undefined).reverse();
-
-  for (const plugin of reversePlugins) {
-    await plugin.build(outputDir);
+  for (const plugin of plugins) {
+    await plugin.buildPost?.(outputDir);
   }
 
   console.log("\nAll done!");

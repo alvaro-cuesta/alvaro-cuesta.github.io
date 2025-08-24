@@ -20,7 +20,7 @@ export const staticFolderPlugin =
       app.use(pathname, express.static(inputFolder));
     };
 
-    const build = async (baseOutputFolder: string) => {
+    const buildPre = async (baseOutputFolder: string) => {
       const outputFolder = path.join(baseOutputFolder, ...mountPointFragments);
 
       console.debug(`[Static folder] ${inputFolder} -> ${outputFolder}`);
@@ -30,6 +30,6 @@ export const staticFolderPlugin =
 
     return {
       attachToExpress,
-      build,
+      buildPre,
     };
   };

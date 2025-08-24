@@ -1,11 +1,8 @@
 import express, { type Express } from "express";
 import { makeXenonMiddleware } from "xenon-ssg/src/middleware";
 import morgan from "morgan";
-import {
-  type XenonExpressSite,
-  getSiteMeta,
-  makeXenonRenderFromXenonExpressSite,
-} from ".";
+import { type XenonExpressSite, getSiteMeta } from ".";
+import { getTagsFromInjectable } from "./plugins/plugins";
 
 export const DEFAULT_DEV_PORT = 1337;
 
@@ -22,16 +19,22 @@ export const makeXenonDevExpressApp = (site: XenonExpressSite): Express => {
     .map((plugin) => plugin(siteMeta))
     .filter((x) => x !== undefined);
 
-  for (const plugin of plugins) {
-    plugin.attachToExpress(app);
+  // We attach in reverse because middlewares are applied back-to-front and we want this to have the same priority as
+  // build mode
+  for (const plugin of [...plugins].reverse()) {
+    plugin.attachToExpress?.(app);
   }
 
-  app.use(
-    makeXenonMiddleware(
-      makeXenonRenderFromXenonExpressSite(site),
-      site.renderToStreamOptions,
-    ),
-  );
+  const injectableRaw = plugins.flatMap((runnablePlugin) => {
+    return runnablePlugin.getInjectable?.(undefined) ?? [];
+  });
+
+  const injectable = getTagsFromInjectable(injectableRaw);
+
+  const render = (pathname: string) =>
+    site.render({ ...siteMeta, pathname, injectable, injectableRaw });
+
+  app.use(makeXenonMiddleware(render, site.renderToStreamOptions));
 
   return app;
 };
