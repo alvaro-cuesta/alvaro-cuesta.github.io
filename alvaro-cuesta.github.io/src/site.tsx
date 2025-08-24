@@ -84,11 +84,10 @@ const STARRY_NIGHT_FILE = "both";
 const STARRY_NIGHT_FILE_PATH = require.resolve(
   `@wooorm/starry-night/style/${STARRY_NIGHT_FILE}`,
 );
-export const starryNightCss = staticFilePlugin({
+export const starryNightCss = singleLightningCssPlugin({
   inputFilepath: STARRY_NIGHT_FILE_PATH,
   outputFilename: `${STARRY_NIGHT_FILE}.css`,
   mountPointFragments: ["css", "starry-night"],
-  injectAs: "stylesheet",
 });
 
 export const makeSite = async (): Promise<XenonExpressSite> => {
