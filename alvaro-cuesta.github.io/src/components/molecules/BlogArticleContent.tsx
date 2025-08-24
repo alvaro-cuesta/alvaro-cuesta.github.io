@@ -1,6 +1,6 @@
 import type { BlogItem } from "../../blog/item";
-import { BlogArticleTableOfContents } from "./BlogArticleTableOfContents";
 import { MDX_DEFAULT_COMPONENTS } from "../../mdx/mdx";
+import { TableOfContents } from "./TableOfContents";
 
 type BlogArticleContentProps = {
   article: BlogItem;
@@ -10,42 +10,29 @@ type BlogArticleContentProps = {
   disableDefaultComponents?: boolean;
 };
 
-const TOC_PERMALINK_ID = "toc";
+const DEFAULT_TOC_PERMALINK_ID = "toc";
 
 export const BlogArticleContent: React.FC<BlogArticleContentProps> = ({
   article: {
-    module: { Component, showTableOfContents, tableOfContents },
+    module: { Component, tableOfContents },
   },
   disableDefaultComponents = false,
 }) => (
-  <>
-    {showTableOfContents ? (
-      <section className="toc-section">
-        {/* Make sure this matches `rehypeAutolinkHeadings` */}
-        <h3 id={TOC_PERMALINK_ID} className="autolink-heading">
-          Table of contents
-          <a
-            className="autolink-link"
-            aria-label="(permalink)"
-            href={`#${TOC_PERMALINK_ID}`}
-          >
-            <span className="fas fa-link autolink-icon"></span>
-          </a>
-        </h3>
-
-        <BlogArticleTableOfContents
-          tableOfContents={tableOfContents}
-          depth={0}
-        />
-      </section>
-    ) : null}
-
-    <section>
-      <Component
-        {...(!disableDefaultComponents
-          ? { components: MDX_DEFAULT_COMPONENTS }
-          : {})}
-      />
-    </section>
-  </>
+  <section>
+    <Component
+      {...(!disableDefaultComponents
+        ? {
+            components: {
+              ...MDX_DEFAULT_COMPONENTS,
+              TableOfContents: () => (
+                <TableOfContents
+                  id={DEFAULT_TOC_PERMALINK_ID}
+                  tableOfContents={tableOfContents}
+                />
+              ),
+            },
+          }
+        : {})}
+    />
+  </section>
 );

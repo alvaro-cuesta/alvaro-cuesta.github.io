@@ -75,7 +75,6 @@ type BlogItemModule = NodeModule & {
   draft?: boolean | undefined;
   slug?: string | undefined;
   tags?: string[] | undefined;
-  showTableOfContents?: boolean | undefined;
 
   // Injected automatically by plugins
   tableOfContents: Toc;
@@ -182,16 +181,6 @@ function assertIsBlogItemModule(
     }
   }
 
-  if (
-    "showTableOfContents" in module &&
-    module.showTableOfContents !== undefined &&
-    typeof module.showTableOfContents !== "boolean"
-  ) {
-    throw new Error(
-      `\`showTableOfContents\` in blog post is not a \`boolean\`, but a \`${typeof module.showTableOfContents}\`.`,
-    );
-  }
-
   if (!("tableOfContents" in module)) {
     throw new Error("Blog module does not have a `tableOfContents` export.");
   }
@@ -214,7 +203,6 @@ export type BlogItemModuleParsed = {
   draft: boolean;
   slug: string;
   tags: string[];
-  showTableOfContents: boolean;
   tableOfContents: Toc;
 };
 
@@ -266,7 +254,6 @@ export const parseBlogItemModuleFromImportModule = (
     draft: module.draft ?? false,
     slug,
     tags: module.tags ?? [],
-    showTableOfContents: module.showTableOfContents ?? false,
     tableOfContents: module.tableOfContents,
   };
 };
