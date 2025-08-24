@@ -13,6 +13,11 @@ const LINK_REGEX =
 
 const META_REGEX = /<meta\s+name="(?<name>.+?)"\s+content="(?<content>.+?)">/;
 
+const META_TAGS_WITH_HREF_CONTENT = [
+  "msapplication-TileImage",
+  "msapplication-config",
+];
+
 const makeParseHtmlTag =
   (cacheBustingFragment?: string) =>
   (tag: string): PluginInjectableTag => {
@@ -33,10 +38,16 @@ const makeParseHtmlTag =
 
     const metaResult = META_REGEX.exec(tag);
     if (metaResult !== null) {
+      const name = metaResult.groups!["name"]!; // `!` is fine because it's marked as non-optional group in the regex
+      const content = metaResult.groups!["content"]!; // `!` is fine because it's marked as non-optional group in the regex
+
       return {
         tagType: "meta" as const,
-        name: metaResult.groups!["name"]!, // `!` is fine because it's marked as non-optional group in the regex
-        content: metaResult.groups!["content"]!, // `!` is fine because it's marked as non-optional group in the regex
+        name,
+        content:
+          cacheBustingFragment && META_TAGS_WITH_HREF_CONTENT.includes(name)
+            ? getCacheBustedFilename(content, cacheBustingFragment)
+            : content,
       };
     }
 
