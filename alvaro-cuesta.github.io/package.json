@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "cross-env NODE_ENV=production tsx --import ./src/mdx/mdxNodeLoaderRegister.mjs ./bin/build.ts",
+    "build:serve": "serve ./dist",
     "dev": "cross-env NODE_ENV=development tsx watch --import ./src/mdx/mdxNodeLoaderRegister.mjs ./bin/dev.ts",
     "test": "jest",
     "test:watch": "jest --watch"
@@ -45,6 +46,7 @@
     "@types/react": "^18.3.3",
     "cross-env": "^7.0.3",
     "jest": "^29.7.0",
+    "serve": "^14.2.4",
     "ts-jest": "^29.2.3",
     "tsx": "^4.16.2"
   }
