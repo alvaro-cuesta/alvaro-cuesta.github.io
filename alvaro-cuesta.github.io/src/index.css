@@ -190,8 +190,9 @@ blockquote {
 }
 
 @media (min-width: 1280px) {
-.bloglist-main > article > section {
-  padding: 0 var(--pico-spacing);
+  .bloglist-main > article > section {
+    padding: 0 var(--pico-spacing);
+  }
 }
 
 .toc-section ol {
