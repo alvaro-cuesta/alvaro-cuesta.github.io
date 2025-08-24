@@ -3,66 +3,74 @@ import favicons, { type FaviconOptions } from "favicons";
 import type { PluginInjectableTag, Plugin } from "./plugins";
 import path from "node:path";
 import fs from "node:fs/promises";
-import { getFileHash } from "../crypto";
+import {
+  getCacheBustedFilename,
+  getCacheBustingFragmentFile,
+} from "../cache-busting";
 
 const LINK_REGEX =
   /<link\s+rel="(?<rel>.+?)"\s+(?:type="(?<type>.+?)"\s+)?(?:sizes="(?<sizes>.+?)"\s+)?(?:media="(?<media>.+?)"\s+)?href="(?<href>.+?)">/;
 
 const META_REGEX = /<meta\s+name="(?<name>.+?)"\s+content="(?<content>.+?)">/;
 
-const parseHtmlTag = (tag: string): PluginInjectableTag => {
-  const linkResult = LINK_REGEX.exec(tag);
-  if (linkResult !== null) {
-    return {
-      tagType: "link" as const,
-      rel: linkResult.groups!["rel"]!, // `!` is fine because it's marked as non-optional group in the regex
-      sizes: linkResult.groups!["sizes"],
-      media: linkResult.groups!["media"],
-      href: linkResult.groups!["href"]!, // `!` is fine because it's marked as non-optional group in the regex
-    };
-  }
+const makeParseHtmlTag =
+  (cacheBustingFragment?: string) =>
+  (tag: string): PluginInjectableTag => {
+    const linkResult = LINK_REGEX.exec(tag);
+    if (linkResult !== null) {
+      const href = linkResult.groups!["href"]!; // `!` is fine because it's marked as non-optional group in the regex
 
-  const metaResult = META_REGEX.exec(tag);
-  if (metaResult !== null) {
-    return {
-      tagType: "meta" as const,
-      name: metaResult.groups!["name"]!, // `!` is fine because it's marked as non-optional group in the regex
-      content: metaResult.groups!["content"]!, // `!` is fine because it's marked as non-optional group in the regex
-    };
-  }
+      return {
+        tagType: "link" as const,
+        rel: linkResult.groups!["rel"]!, // `!` is fine because it's marked as non-optional group in the regex
+        sizes: linkResult.groups!["sizes"],
+        media: linkResult.groups!["media"],
+        href: cacheBustingFragment
+          ? getCacheBustedFilename(href, cacheBustingFragment)
+          : href,
+      };
+    }
 
-  throw new Error(`Unknown tag: ${tag}`);
-};
+    const metaResult = META_REGEX.exec(tag);
+    if (metaResult !== null) {
+      return {
+        tagType: "meta" as const,
+        name: metaResult.groups!["name"]!, // `!` is fine because it's marked as non-optional group in the regex
+        content: metaResult.groups!["content"]!, // `!` is fine because it's marked as non-optional group in the regex
+      };
+    }
 
-const getDefaultCacheBustingQueryParam = async (inputFilepath: string) => {
-  const hash = await getFileHash(inputFilepath, "base64url");
-  const partialHash = hash.slice(0, 8);
-
-  return `v=${partialHash}`;
-};
+    throw new Error(`Unknown tag: ${tag}`);
+  };
 
 type FaviconPluginOptions = {
   inputFilepath: string;
-  faviconOptions: FaviconOptions;
+  faviconOptions: Omit<FaviconOptions, "cacheBustingQueryParam">;
   mountPointFragments?: string[];
+  /**
+   * - `string` to manually control fragment
+   * - `false` to disable cache busting
+   * - `undefined` to calculate from input file hash
+   */
+  cacheBustingFragment?: string | false | undefined;
 };
 
 export const faviconPlugin = async ({
   inputFilepath,
   faviconOptions,
   mountPointFragments = [],
+  cacheBustingFragment,
 }: FaviconPluginOptions): Promise<Plugin> => {
   // TODO: Some cache/watch would be nice -- this is currently taking several secs on every dev server restart
 
-  // If the user didn't provide a custom cache-busting query param, add a default one based on the input file's content
-  const cacheBustingQueryParam =
-    faviconOptions.cacheBustingQueryParam ??
-    (await getDefaultCacheBustingQueryParam(inputFilepath));
+  const realCacheBustingFragment =
+    cacheBustingFragment === undefined
+      ? await getCacheBustingFragmentFile(inputFilepath)
+      : cacheBustingFragment === false
+        ? undefined
+        : cacheBustingFragment;
 
-  const { images, files, html } = await favicons(inputFilepath, {
-    ...faviconOptions,
-    cacheBustingQueryParam,
-  });
+  const { images, files, html } = await favicons(inputFilepath, faviconOptions);
 
   const filesByName = {
     ...Object.fromEntries(images.map((image) => [image.name, image.contents])),
@@ -95,19 +103,30 @@ export const faviconPlugin = async ({
     await fs.mkdir(outputFolder, { recursive: true });
 
     for (const image of images) {
-      const outputFilepath = path.join(outputFolder, image.name);
+      const outputFilepath = path.join(
+        outputFolder,
+        realCacheBustingFragment
+          ? getCacheBustedFilename(image.name, realCacheBustingFragment)
+          : image.name,
+      );
       console.debug(`[Favicon Image] /${image.name} -> ${outputFilepath}`);
       await fs.writeFile(outputFilepath, image.contents);
     }
 
     for (const file of files) {
-      const outputFilepath = path.join(outputFolder, file.name);
+      const outputFilepath = path.join(
+        outputFolder,
+        realCacheBustingFragment
+          ? getCacheBustedFilename(file.name, realCacheBustingFragment)
+          : file.name,
+      );
       console.debug(`[Favicon File] /${file.name} -> ${outputFilepath}`);
       await fs.writeFile(outputFilepath, file.contents);
     }
   };
 
-  const getInjectable = () => html.map(parseHtmlTag);
+  const getInjectable = () =>
+    html.map(makeParseHtmlTag(realCacheBustingFragment));
 
   return () => ({
     attachToExpress,

@@ -12,7 +12,12 @@ type StaticFilePluginOptions = {
   outputFilename: string;
   mountPointFragments?: string[];
   injectAs?: "stylesheet";
-  cacheBustingFragment?: string | false;
+  /**
+   * - `string` to manually control fragment
+   * - `false` to disable cache busting
+   * - `undefined` to calculate from input file hash
+   */
+  cacheBustingFragment?: string | false | undefined;
 };
 
 export const staticFilePlugin =
