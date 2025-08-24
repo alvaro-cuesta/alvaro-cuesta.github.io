@@ -211,3 +211,23 @@ blockquote {
     margin-bottom: 0;
   }
 }
+
+@media (min-width: 1536px) {
+  .container {
+    /* Value for 1280px breakpoint */
+    max-width: 1200 !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    /* Value for 1024px breakpoint */
+    --pico-font-size: 118.75% !important;
+  }
+}
+@media (min-width: 1536px) {
+  :root {
+    /* Value for 1024px breakpoint */
+    --pico-font-size: 118.75% !important;
+  }
+}
