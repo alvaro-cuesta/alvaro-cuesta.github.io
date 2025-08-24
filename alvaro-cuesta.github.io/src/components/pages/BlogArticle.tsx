@@ -54,6 +54,7 @@ export const BlogArticle: React.FC<BlogArticleProps> = ({
 
   return (
     <Template
+      title={title}
       siteRenderMeta={siteRenderMeta}
       metaTags={
         <>
