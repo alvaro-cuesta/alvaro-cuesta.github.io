@@ -83,7 +83,7 @@ export const singleLightningCssPlugin =
       );
       await fs.writeFile(outputFilepath, code);
 
-      return outputFilepath;
+      return `/${[...mountPointFragments, realOutputFilename].join("/")}`;
     };
 
     const getInjectable: GetInjectableFunction<string> | undefined = (

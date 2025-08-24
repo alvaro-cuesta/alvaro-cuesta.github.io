@@ -58,7 +58,7 @@ export const staticFilePlugin =
       console.debug(`[Static file] ${inputFilepath} -> ${outputFilepath}`);
       await fs.cp(inputFilepath, outputFilepath);
 
-      return outputFilepath;
+      return `/${[...mountPointFragments, realOutputFilename].join("/")}`;
     };
 
     const getInjectable: GetInjectableFunction<string> | undefined =
