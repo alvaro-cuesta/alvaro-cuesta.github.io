@@ -71,7 +71,7 @@ article > header {
   gap: var(--pico-grid-column-gap);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .flex-responsive {
     flex-direction: column;
     gap: var(--pico-grid-row-gap);
