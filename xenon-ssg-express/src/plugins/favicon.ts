@@ -120,9 +120,15 @@ export const faviconPlugin = async ({
     }
 
     for (const file of files) {
+      // Replace cache-busted images in files too
+      let realContents = file.contents;
+      for (const [name, cacheBustedName] of Object.entries(cacheBustingMap)) {
+        realContents = realContents.replaceAll(name, cacheBustedName);
+      }
+
       let realOutputFilename;
       if (cacheBustingFragment === undefined) {
-        const fragment = await getCacheBustingFragmentContent(file.contents);
+        const fragment = await getCacheBustingFragmentContent(realContents);
         realOutputFilename = getCacheBustedFilename(file.name, fragment);
       } else if (cacheBustingFragment === false) {
         realOutputFilename = file.name;
@@ -137,7 +143,7 @@ export const faviconPlugin = async ({
 
       const outputFilepath = path.join(outputFolder, realOutputFilename);
       console.debug(`[Favicon File] /${file.name} -> ${outputFilepath}`);
-      await fs.writeFile(outputFilepath, file.contents);
+      await fs.writeFile(outputFilepath, realContents);
     }
 
     return cacheBustingMap;
