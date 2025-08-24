@@ -15,3 +15,12 @@ export const getFileHash = async (
 
   return hash.digest(encoding);
 };
+
+export const getContentHash = async (
+  input: string | NodeJS.ArrayBufferView,
+  encoding: crypto.BinaryToTextEncoding,
+): Promise<string> => {
+  const hash = crypto.createHash("sha256");
+  hash.update(input);
+  return hash.digest(encoding);
+};

@@ -3,7 +3,10 @@ import { transform } from "lightningcss";
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { Plugin, GetInjectableFunction } from "./plugins";
-import { getCacheBustedFilename, getCacheBustingHash } from "../cache-busting";
+import {
+  getCacheBustedFilename,
+  getCacheBustingFragmentContent,
+} from "../cache-busting";
 
 type SingleLightningCssPluginOptions = {
   inputFilepath: string;
@@ -58,8 +61,7 @@ export const singleLightningCssPlugin =
 
       let realOutputFilename;
       if (cacheBustingFragment === undefined) {
-        const content = await fs.readFile(inputFilepath);
-        const fragment = getCacheBustingHash(content);
+        const fragment = await getCacheBustingFragmentContent(code);
         realOutputFilename = getCacheBustedFilename(outputFilename, fragment);
       } else if (cacheBustingFragment === false) {
         realOutputFilename = outputFilename;

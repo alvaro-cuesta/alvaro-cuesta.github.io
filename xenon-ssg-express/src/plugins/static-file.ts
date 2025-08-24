@@ -2,7 +2,10 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import express, { type Express } from "express";
 import type { Plugin, GetInjectableFunction } from "./plugins";
-import { getCacheBustedFilename, getCacheBustingHash } from "../cache-busting";
+import {
+  getCacheBustedFilename,
+  getCacheBustingFragmentFile,
+} from "../cache-busting";
 
 type StaticFilePluginOptions = {
   inputFilepath: string;
@@ -35,8 +38,7 @@ export const staticFilePlugin =
 
       let realOutputFilename;
       if (cacheBustingFragment === undefined) {
-        const content = await fs.readFile(inputFilepath);
-        const fragment = getCacheBustingHash(content);
+        const fragment = await getCacheBustingFragmentFile(inputFilepath);
         realOutputFilename = getCacheBustedFilename(outputFilename, fragment);
       } else if (cacheBustingFragment === false) {
         realOutputFilename = outputFilename;
