@@ -64,6 +64,11 @@ export const singleLightningCssPlugin =
 
     const injectable: PluginInjectableTag[] = [
       {
+        tagType: "preload" as const,
+        as: "style" as const,
+        href: pathname,
+      },
+      {
         tagType: "stylesheet" as const,
         href: pathname,
       },

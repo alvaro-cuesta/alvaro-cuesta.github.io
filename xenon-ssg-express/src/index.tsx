@@ -54,6 +54,9 @@ export const makeXenonRenderFromXenonExpressSite = (site: XenonExpressSite) => {
       case "stylesheet":
         return <link key={index} rel="stylesheet" href={tag.href} />;
 
+      case "preload":
+        return <link key={index} rel="preload" as={tag.as} href={tag.href} />;
+
       case "link":
         return (
           <link

@@ -39,6 +39,11 @@ export const staticFilePlugin =
       injectAs === "stylesheet"
         ? [
             {
+              tagType: "preload" as const,
+              as: "style" as const,
+              href: pathname,
+            },
+            {
               tagType: "stylesheet" as const,
               href: pathname,
             },
