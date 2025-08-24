@@ -2,13 +2,13 @@ import type { Express } from "express";
 import type { XenonExpressSiteMeta } from "..";
 import type { ReactNode } from "react";
 
-export type GetInjectableFunction<BuildPreResult> = (
+export type GetInjectableFunction<R> = (
   /**
    * Value returned from {@link RunnablePlugin.buildPre}.
    *
    * Will be `undefined` if the plugin is running in dev mode.
    */
-  buildPreResult: BuildPreResult | undefined,
+  buildPreResult: R | undefined,
 ) => PluginInjectableTag[] | undefined;
 
 export type PluginInjectableStylesheet = {

@@ -3,12 +3,13 @@ import { transform } from "lightningcss";
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { Plugin, GetInjectableFunction } from "./plugins";
-import { getCacheBustingHash } from "../utils";
+import { getCacheBustedFilename, getCacheBustingHash } from "../cache-busting";
 
 type SingleLightningCssPluginOptions = {
   inputFilepath: string;
   outputFilename: string;
   mountPointFragments?: string[];
+  cacheBustingFragment?: string | false;
 };
 
 export const singleLightningCssPlugin =
@@ -16,6 +17,7 @@ export const singleLightningCssPlugin =
     inputFilepath,
     outputFilename,
     mountPointFragments = [],
+    cacheBustingFragment,
   }: SingleLightningCssPluginOptions): Plugin<string> =>
   () => {
     const pathname = `/${[...mountPointFragments, outputFilename].join("/")}`;
@@ -47,27 +49,42 @@ export const singleLightningCssPlugin =
     };
 
     const buildPre = async (baseOutputFolder: string) => {
+      console.debug(`[Single Lightning CSS] ${inputFilepath}`);
+
       const outputFolder = path.join(baseOutputFolder, ...mountPointFragments);
-      const outputFilepath = path.join(outputFolder, outputFilename);
+      await fs.mkdir(outputFolder, { recursive: true });
+
+      const code = await compileCss();
+
+      let realOutputFilename;
+      if (cacheBustingFragment === undefined) {
+        const content = await fs.readFile(inputFilepath);
+        const fragment = getCacheBustingHash(content);
+        realOutputFilename = getCacheBustedFilename(outputFilename, fragment);
+      } else if (cacheBustingFragment === false) {
+        realOutputFilename = outputFilename;
+      } else {
+        realOutputFilename = getCacheBustedFilename(
+          outputFilename,
+          cacheBustingFragment,
+        );
+      }
+      const outputFilepath = path.join(outputFolder, realOutputFilename);
 
       console.debug(
         `[Single Lightning CSS] ${inputFilepath} -> ${outputFilepath}`,
       );
-
-      const [, code] = await Promise.all([
-        await fs.mkdir(outputFolder, { recursive: true }),
-        await compileCss(),
-      ]);
-
       await fs.writeFile(outputFilepath, code);
 
-      return getCacheBustingHash(code);
+      return outputFilepath;
     };
 
-    const getInjectable: GetInjectableFunction<string> = (cachebust) => [
+    const getInjectable: GetInjectableFunction<string> | undefined = (
+      cacheBustedPathname,
+    ) => [
       {
         tagType: "stylesheet" as const,
-        href: cachebust ? `${pathname}?v=${cachebust}` : pathname,
+        href: cacheBustedPathname ?? pathname,
       },
     ];
 
