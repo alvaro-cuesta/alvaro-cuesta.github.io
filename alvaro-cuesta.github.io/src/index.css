@@ -143,11 +143,13 @@ ul.blog-sidebar :where(a, [role="link"]):not(:hover) {
   display: flex;
   align-items: center;
   gap: 0.2em;
+  font-size: 80%;
 }
 
 .icon-field :where(.fa, .fas, .fab) {
   font-size: 0.75em;
   margin-left: 0.2em;
+  vertical-align: middle;
 }
 
 blockquote {
