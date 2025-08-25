@@ -93,9 +93,7 @@ export type Plugin<R = unknown> = (
 function renderInjectableRaw(tag: PluginInjectableTag, index: number) {
   switch (tag.tagType) {
     case "stylesheet":
-      return (
-        <link key={index} rel="stylesheet" type="text/css" href={tag.href} />
-      );
+      return <link key={index} rel="stylesheet" href={tag.href} />;
 
     case "link":
       return (
