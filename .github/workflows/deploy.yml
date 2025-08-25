@@ -4,6 +4,9 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: [master]
+    paths-ignore:
+      - "README.md"
+      - "TODO.md"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -24,50 +27,75 @@ env:
   BUILD_PATH: alvaro-cuesta.github.io
 
 jobs:
+  lint:
+    name: Lint ${{ matrix.linter.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        linter:
+          - { name: "TypeScript", script: "lint:tsc" }
+          # - { name: "Prettier", script: "lint:prettier" }
+          # - { name: "ESLint", script: "lint:eslint" }
+          # - { name: "Knip", script: "lint:knip" }
+          # - { name: "Madge", script: "lint:madge" }
+    steps:
+      - &checkout
+        name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - &setup
+        name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - &install_deps
+        name: Install dependencies
+        shell: bash
+        run: npm ci
+        working-directory: ${{ env.BUILD_PATH }}
+
+      - name: Run ${{ matrix.linter.name }}
+        run: npm run ${{ matrix.linter.script }}
+        working-directory: ${{ env.BUILD_PATH }}
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - *checkout
+      - *setup
+      - *install_deps
+
+      - name: Run tests
+        run: npm test
+        working-directory: ${{ env.BUILD_PATH }}
+
   build:
     name: Build
+    needs:
+      - lint
+      - test
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Detect package manager
-        id: detect-package-manager
-        run: |
-          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=yarn" >> $GITHUB_OUTPUT
-            echo "lockfile=yarn.lock" >> $GITHUB_OUTPUT
-            exit 0
-          elif [ -f "${{ github.workspace }}/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            echo "lockfile=package-lock.json" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "Unable to determine package manager"
-            exit 1
-          fi
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
-          cache-dependency-path: ${{ steps.detect-package-manager.outputs.lockfile }}
+      - *checkout
+      - *setup
+      - *install_deps
+
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
-      - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-        working-directory: ${{ env.BUILD_PATH }}
+
       - name: Build with Xenon SSG
         env:
           XENON_ORIGIN: ${{ steps.pages.outputs.origin }}
           XENON_BASE_PATH: ${{ steps.pages.outputs.base_path }}
-        run: ${{ steps.detect-package-manager.outputs.manager }} run build
+        run: npm run build
         working-directory: ${{ env.BUILD_PATH }}
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
