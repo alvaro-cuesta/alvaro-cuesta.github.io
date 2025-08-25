@@ -40,6 +40,8 @@ export const Homepage: React.FC<HomepageProps> = ({ siteRenderMeta }) => {
 
   return (
     <Template
+      title="Full-stack software engineer"
+      titleOrder="site-first"
       siteRenderMeta={siteRenderMeta}
       metaTags={
         <>

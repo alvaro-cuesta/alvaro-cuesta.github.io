@@ -18,6 +18,7 @@ export const BlogYearList: React.FC<BlogYearListProps> = ({
 
   return (
     <Template
+      title="All years | Blog"
       siteRenderMeta={siteRenderMeta}
       metaTags={
         <>

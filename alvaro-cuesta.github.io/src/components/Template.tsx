@@ -11,6 +11,7 @@ type TemplateProps = {
   canonicalPathname?: string;
   canonicalUrl?: string;
   title?: string;
+  titleOrder?: "page-first" | "site-first" | "override";
   metaTags?: ReactNode;
   mainClassName?: string;
   children?: ReactNode;
@@ -21,13 +22,20 @@ export const Template: React.FC<TemplateProps> = ({
   canonicalPathname = siteRenderMeta.pathname,
   canonicalUrl = `${siteRenderMeta.baseUrl}${canonicalPathname}`,
   title,
+  titleOrder = "page-first",
   metaTags,
   mainClassName,
   children,
 }) => {
   const blogItems = useBlogItems();
 
-  const fullTitle = title ? `${title} | Álvaro Cuesta` : "Álvaro Cuesta";
+  const fullTitle = title
+    ? titleOrder === "page-first"
+      ? `${title} | Álvaro Cuesta`
+      : titleOrder === "site-first"
+        ? `Álvaro Cuesta | ${title}`
+        : title
+    : "Álvaro Cuesta";
   const year = new Date().getFullYear();
 
   return (

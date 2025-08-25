@@ -56,6 +56,7 @@ export const BlogYear: React.FC<BlogYearProps> = ({ siteRenderMeta, year }) => {
 
   return (
     <Template
+      title={`Year ${year} | Blog`}
       siteRenderMeta={siteRenderMeta}
       metaTags={
         <>

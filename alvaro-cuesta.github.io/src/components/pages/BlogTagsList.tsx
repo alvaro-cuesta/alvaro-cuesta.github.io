@@ -16,6 +16,7 @@ export const BlogTagList: React.FC<BlogTagListProps> = ({ siteRenderMeta }) => {
 
   return (
     <Template
+      title="All tags | Blog"
       siteRenderMeta={siteRenderMeta}
       metaTags={
         <>

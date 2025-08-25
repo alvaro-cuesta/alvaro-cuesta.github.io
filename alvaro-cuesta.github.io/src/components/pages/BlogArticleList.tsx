@@ -46,6 +46,7 @@ export const BlogArticleList: React.FC<BlogArticleListProps> = ({
 
   return (
     <Template
+      title="Blog"
       siteRenderMeta={siteRenderMeta}
       canonicalPathname={canonicalPathname}
       metaTags={
