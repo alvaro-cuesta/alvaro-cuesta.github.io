@@ -3,8 +3,6 @@ import { PassThrough, Readable } from "node:stream";
 import fs from "node:fs/promises";
 import type { ReactNode } from "react";
 import type { PathLike } from "node:fs";
-import { buffer } from "node:stream/consumers";
-import { minify as minifyHtml } from "@minify-html/node";
 
 export type RenderToStreamOptions = {
   /**
@@ -20,12 +18,6 @@ export type RenderToStreamOptions = {
    * - If not provided, the rendering process will not have a timeout.
    */
   timeoutMsecs?: number;
-  /**
-   * Whether to emit minified HTML.
-   *
-   * @default true;
-   */
-  minify?: boolean;
 };
 
 /**
@@ -90,21 +82,14 @@ const renderToFile = async (
   options?: RenderToStreamOptions,
 ) => {
   const stream = renderToStream(reactNode, options);
-
-  if (options?.minify !== false) {
-    const content = await buffer(stream);
-    const minified = await minifyHtml(content, {});
-    await fs.writeFile(path, minified);
-  } else {
-    await fs.writeFile(path, stream);
-  }
+  await fs.writeFile(path, stream);
 };
 
 /**
  * Render a React node to a file atomically.
  *
  * This means that the file will be written to a temporary file first, and then renamed to the final
- * path to avoid truncating the original file if the render process fails in the middle of writing
+ * path to avoid truncating the original file if the render process files in the middle of writing
  * the file.
  */
 export const renderToFileAtomic = async (
