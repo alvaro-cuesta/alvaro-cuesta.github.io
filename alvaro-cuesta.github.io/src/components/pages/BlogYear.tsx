@@ -52,17 +52,17 @@ export const BlogYear: React.FC<BlogYearProps> = ({ siteRenderMeta, year }) => {
 
   // TODO: Pagination?
 
+  const description = `Álvaro Cuesta's personal blog (year ${year})`;
+
   return (
     <Template
       siteRenderMeta={siteRenderMeta}
       metaTags={
         <>
+          <meta name="description" content={description} />
           <meta property="og:type" content="website" />
           <meta property="og:title" content="Álvaro Cuesta's Blog" />
-          <meta
-            property="og:description"
-            content={`Álvaro Cuesta's personal blog (year ${year})`}
-          />
+          <meta property="og:description" content={description} />
           <meta property="og:image" content={siteRenderMeta.defaultOgImage} />
           <meta name="twitter:card" content="summary" />
         </>

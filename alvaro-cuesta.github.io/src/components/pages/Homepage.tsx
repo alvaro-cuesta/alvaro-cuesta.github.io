@@ -36,17 +36,17 @@ export type HomepageProps = {
 export const Homepage: React.FC<HomepageProps> = ({ siteRenderMeta }) => {
   const year = new Date().getFullYear();
 
+  const description = "Álvaro Cuesta's personal website.";
+
   return (
     <Template
       siteRenderMeta={siteRenderMeta}
       metaTags={
         <>
+          <meta name="description" content={description} />
           <meta property="og:type" content="website" />
           <meta property="og:title" content="Álvaro Cuesta" />
-          <meta
-            property="og:description"
-            content="Álvaro Cuesta's personal website."
-          />
+          <meta property="og:description" content={description} />
           <meta property="og:image" content={siteRenderMeta.defaultOgImage} />
           <meta name="twitter:card" content="summary" />
         </>

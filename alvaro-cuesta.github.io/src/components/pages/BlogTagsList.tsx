@@ -12,17 +12,17 @@ type BlogTagListProps = {
 export const BlogTagList: React.FC<BlogTagListProps> = ({ siteRenderMeta }) => {
   const blogItems = useBlogItems();
 
+  const description = "Álvaro Cuesta's personal blog (all tags)";
+
   return (
     <Template
       siteRenderMeta={siteRenderMeta}
       metaTags={
         <>
+          <meta name="description" content={description} />
           <meta property="og:type" content="website" />
           <meta property="og:title" content="Álvaro Cuesta's Blog" />
-          <meta
-            property="og:description"
-            content="Álvaro Cuesta's personal blog (all tags)"
-          />
+          <meta property="og:description" content={description} />
           <meta property="og:image" content={siteRenderMeta.defaultOgImage} />
           <meta name="twitter:card" content="summary" />
         </>

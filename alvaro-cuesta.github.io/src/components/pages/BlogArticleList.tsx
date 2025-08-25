@@ -40,20 +40,20 @@ export const BlogArticleList: React.FC<BlogArticleListProps> = ({
     page: page === 1 ? null : page,
   });
 
+  const description = `Álvaro Cuesta's personal blog${
+    page !== 1 ? ` (page ${page})` : "."
+  }`;
+
   return (
     <Template
       siteRenderMeta={siteRenderMeta}
       canonicalPathname={canonicalPathname}
       metaTags={
         <>
+          <meta name="description" content={description} />
           <meta property="og:type" content="website" />
           <meta property="og:title" content="Álvaro Cuesta's Blog" />
-          <meta
-            property="og:description"
-            content={`Álvaro Cuesta's personal blog${
-              page !== 1 ? ` (page ${page})` : "."
-            }`}
-          />
+          <meta property="og:description" content={description} />
           <meta property="og:image" content={siteRenderMeta.defaultOgImage} />
           <meta name="twitter:card" content="summary" />
         </>
