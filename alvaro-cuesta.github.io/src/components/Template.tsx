@@ -60,22 +60,20 @@ const CRITICAL_STYLES_CODE = `
       color: #373c44;
       /* --pico-background-color */
       background-color: #fff;
-    }
 
-    a {
-      /* --pico-primary */
-      color: #2060df;
+      a {
+        /* --pico-primary */
+        color: #2060df;
+      }
     }
   }
 
   @media only screen and (prefers-color-scheme: dark) {
-    :root:not([data-theme]) {
-      :root {
-        /* --pico-color */
-        color: #c2c7d0;
-        /* --pico-background-color */
-        background-color: #13171f;
-      }
+    :root {
+      /* --pico-color */
+      color: #c2c7d0;
+      /* --pico-background-color */
+      background-color: #13171f;
 
       a {
         /* --pico-primary */
