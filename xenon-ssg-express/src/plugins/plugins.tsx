@@ -2,14 +2,25 @@ import type { Express } from "express";
 import type { XenonExpressSiteMeta } from "..";
 import type { ReactNode } from "react";
 
-export type GetInjectableFunction<R> = (
-  /**
-   * Value returned from {@link RunnablePlugin.buildPre}.
-   *
-   * Will be `undefined` if the plugin is running in dev mode.
-   */
-  buildPreResult: R | undefined,
-) => PluginInjectableTag[] | undefined;
+export type PluginAttachToExpressFunction = (app: Express) => void;
+
+export type PluginBuildPreOptions = {
+  baseOutputFolder: string;
+};
+
+export type PluginBuildPreFunction<R = unknown> = (
+  baseOutputFolder: PluginBuildPreOptions,
+) => Promise<R>;
+
+export type PluginGeneratedPage = {};
+
+export type PluginBuildPostOptions = {
+  baseOutputFolder: string;
+};
+
+export type PluginBuildPostFunction = (
+  options: PluginBuildPostOptions,
+) => Promise<void>;
 
 export type PluginInjectableStylesheet = {
   tagType: "stylesheet";
@@ -39,28 +50,37 @@ export type PluginInjectableTag =
   | PluginInjectableLink
   | PluginInjectableMeta;
 
+export type PluginGetInjectableFunction<R> = (
+  /**
+   * Value returned from {@link RunnablePlugin.buildPre}.
+   *
+   * Will be `undefined` if the plugin is running in dev mode.
+   */
+  buildPreResult: R | undefined,
+) => PluginInjectableTag[] | undefined;
+
 export type RunnablePlugin<R = unknown> = {
   /**
    * Attaches the plugin to Express during `dev` mode.
    */
-  attachToExpress?: (app: Express) => void;
+  attachToExpress?: PluginAttachToExpressFunction;
 
   /**
    * Builds the plugin during `build` mode. Runs before the static site is generated.
    */
-  buildPre?: (baseOutputFolder: string) => Promise<R>;
+  buildPre?: PluginBuildPreFunction<R> | undefined;
 
   /**
    * Builds the plugin during `build` mode. Runs after the static site is generated.
    */
-  buildPost?: (baseOutputFolder: string) => Promise<void>;
+  buildPost?: PluginBuildPostFunction | undefined;
 
   /**
    * Injectable tags that can be used by the plugin.
    *
    * For example, a CSS file can be injected into the HTML head.
    */
-  getInjectable?: GetInjectableFunction<R> | undefined;
+  getInjectable?: PluginGetInjectableFunction<R> | undefined;
 };
 
 /**

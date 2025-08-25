@@ -26,3 +26,4 @@
 - Add global "last published/updated/whatever" meta tag on build
 - Test in CI
 - `ld+json` (e.g. a `BlogPosting`)
+- Reduce FOUC

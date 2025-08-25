@@ -1,7 +1,11 @@
 import path from "node:path";
 import fs from "node:fs/promises";
-import express, { type Express } from "express";
-import type { Plugin } from "./plugins";
+import express from "express";
+import type {
+  Plugin,
+  PluginAttachToExpressFunction,
+  PluginBuildPreFunction,
+} from "./plugins";
 
 type StaticFolderPluginOptions = {
   inputFolder: string;
@@ -16,11 +20,11 @@ export const staticFolderPlugin =
   () => {
     const pathname = `/${mountPointFragments.join("/")}`;
 
-    const attachToExpress = (app: Express) => {
+    const attachToExpress: PluginAttachToExpressFunction = (app) => {
       app.use(pathname, express.static(inputFolder));
     };
 
-    const buildPre = async (baseOutputFolder: string) => {
+    const buildPre: PluginBuildPreFunction = async ({ baseOutputFolder }) => {
       const outputFolder = path.join(baseOutputFolder, ...mountPointFragments);
 
       console.debug(`[Static folder] ${inputFolder} -> ${outputFolder}`);

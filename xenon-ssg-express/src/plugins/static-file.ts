@@ -1,7 +1,11 @@
 import path from "node:path";
 import fs from "node:fs/promises";
 import express, { type Express } from "express";
-import type { Plugin, GetInjectableFunction } from "./plugins";
+import type {
+  Plugin,
+  PluginBuildPreFunction,
+  PluginGetInjectableFunction,
+} from "./plugins";
 import {
   getCacheBustedFilename,
   getCacheBustingFragmentFile,
@@ -20,6 +24,8 @@ type StaticFilePluginOptions = {
   cacheBustingFragment?: string | false | undefined;
 };
 
+type StaticFilePluginBuildPreResult = { cacheBustedPathname: string };
+
 export const staticFilePlugin =
   ({
     inputFilepath,
@@ -27,7 +33,7 @@ export const staticFilePlugin =
     mountPointFragments = [],
     injectAs,
     cacheBustingFragment,
-  }: StaticFilePluginOptions): Plugin<string> =>
+  }: StaticFilePluginOptions): Plugin<StaticFilePluginBuildPreResult> =>
   () => {
     const pathname = `/${[...mountPointFragments, outputFilename].join("/")}`;
 
@@ -35,7 +41,9 @@ export const staticFilePlugin =
       app.use(pathname, express.static(inputFilepath));
     };
 
-    const buildPre = async (baseOutputFolder: string) => {
+    const buildPre: PluginBuildPreFunction<
+      StaticFilePluginBuildPreResult
+    > = async ({ baseOutputFolder }) => {
       console.debug(`[Static file] ${inputFilepath}`);
 
       const outputFolder = path.join(baseOutputFolder, ...mountPointFragments);
@@ -58,15 +66,19 @@ export const staticFilePlugin =
       console.debug(`[Static file] ${inputFilepath} -> ${outputFilepath}`);
       await fs.cp(inputFilepath, outputFilepath);
 
-      return `/${[...mountPointFragments, realOutputFilename].join("/")}`;
+      return {
+        cacheBustedPathname: `/${[...mountPointFragments, realOutputFilename].join("/")}`,
+      };
     };
 
-    const getInjectable: GetInjectableFunction<string> | undefined =
+    const getInjectable:
+      | PluginGetInjectableFunction<StaticFilePluginBuildPreResult>
+      | undefined =
       injectAs === "stylesheet"
-        ? (cacheBustedPathname) => [
+        ? (buildPreResult) => [
             {
               tagType: "stylesheet" as const,
-              href: cacheBustedPathname ?? pathname,
+              href: buildPreResult?.cacheBustedPathname ?? pathname,
             },
           ]
         : undefined;

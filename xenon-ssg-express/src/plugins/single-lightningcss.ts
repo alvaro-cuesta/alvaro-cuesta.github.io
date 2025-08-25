@@ -1,8 +1,12 @@
-import type { Express } from "express";
 import { transform } from "lightningcss";
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { Plugin, GetInjectableFunction } from "./plugins";
+import type {
+  Plugin,
+  PluginAttachToExpressFunction,
+  PluginBuildPreFunction,
+  PluginGetInjectableFunction,
+} from "./plugins";
 import {
   getCacheBustedFilename,
   getCacheBustingFragmentContent,
@@ -20,13 +24,15 @@ type SingleLightningCssPluginOptions = {
   cacheBustingFragment?: string | false | undefined;
 };
 
+type SingleLightningCssPluginBuildPreResult = { cacheBustedPathname: string };
+
 export const singleLightningCssPlugin =
   ({
     inputFilepath,
     outputFilename,
     mountPointFragments = [],
     cacheBustingFragment,
-  }: SingleLightningCssPluginOptions): Plugin<string> =>
+  }: SingleLightningCssPluginOptions): Plugin<SingleLightningCssPluginBuildPreResult> =>
   () => {
     const pathname = `/${[...mountPointFragments, outputFilename].join("/")}`;
 
@@ -49,14 +55,16 @@ export const singleLightningCssPlugin =
       return outputCode;
     };
 
-    const attachToExpress = (app: Express) => {
+    const attachToExpress: PluginAttachToExpressFunction = (app) => {
       app.get(pathname, async (_req, res) => {
         const code = await compileCss();
         res.status(200).contentType("css").end(code);
       });
     };
 
-    const buildPre = async (baseOutputFolder: string) => {
+    const buildPre: PluginBuildPreFunction<
+      SingleLightningCssPluginBuildPreResult
+    > = async ({ baseOutputFolder }) => {
       console.debug(`[Single Lightning CSS] ${inputFilepath}`);
 
       const outputFolder = path.join(baseOutputFolder, ...mountPointFragments);
@@ -83,15 +91,17 @@ export const singleLightningCssPlugin =
       );
       await fs.writeFile(outputFilepath, code);
 
-      return `/${[...mountPointFragments, realOutputFilename].join("/")}`;
+      return {
+        cacheBustedPathname: `/${[...mountPointFragments, realOutputFilename].join("/")}`,
+      };
     };
 
-    const getInjectable: GetInjectableFunction<string> | undefined = (
-      cacheBustedPathname,
-    ) => [
+    const getInjectable:
+      | PluginGetInjectableFunction<SingleLightningCssPluginBuildPreResult>
+      | undefined = (buildPreResult) => [
       {
         tagType: "stylesheet" as const,
-        href: cacheBustedPathname ?? pathname,
+        href: buildPreResult?.cacheBustedPathname ?? pathname,
       },
     ];
 

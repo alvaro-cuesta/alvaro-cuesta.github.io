@@ -3,7 +3,8 @@ import favicons, { type FaviconOptions } from "favicons";
 import type {
   PluginInjectableTag,
   Plugin,
-  GetInjectableFunction,
+  PluginGetInjectableFunction,
+  PluginBuildPreFunction,
 } from "./plugins";
 import path from "node:path";
 import fs from "node:fs/promises";
@@ -53,14 +54,16 @@ type FaviconPluginOptions = {
   cacheBustingFragment?: string | false | undefined;
 };
 
-type CacheBustingMap = Record<string, string>;
+type FaviconPluginBuildPreResult = {
+  cacheBustingMap: Record<string, string>;
+};
 
 export const faviconPlugin = async ({
   inputFilepath,
   faviconOptions,
   mountPointFragments = [],
   cacheBustingFragment,
-}: FaviconPluginOptions): Promise<Plugin<CacheBustingMap>> => {
+}: FaviconPluginOptions): Promise<Plugin<FaviconPluginBuildPreResult>> => {
   // TODO: Some cache/watch would be nice -- this is currently taking several secs on every dev server restart
   const { images, files, html } = await favicons(inputFilepath, faviconOptions);
 
@@ -90,10 +93,10 @@ export const faviconPlugin = async ({
     });
   };
 
-  const buildPre = async (
-    baseOutputFolder: string,
-  ): Promise<CacheBustingMap> => {
-    const cacheBustingMap: CacheBustingMap = {};
+  const buildPre: PluginBuildPreFunction<FaviconPluginBuildPreResult> = async ({
+    baseOutputFolder,
+  }) => {
+    const cacheBustingMap: Record<string, string> = {};
 
     const outputFolder = path.join(baseOutputFolder, ...mountPointFragments);
     await fs.mkdir(outputFolder, { recursive: true });
@@ -146,15 +149,17 @@ export const faviconPlugin = async ({
       await fs.writeFile(outputFilepath, realContents);
     }
 
-    return cacheBustingMap;
+    return { cacheBustingMap };
   };
 
-  const getInjectable: GetInjectableFunction<CacheBustingMap> = (
-    cacheBustingMap,
-  ) =>
+  const getInjectable: PluginGetInjectableFunction<
+    FaviconPluginBuildPreResult
+  > = (buildPreResult) =>
     html.map((htmlTag) => {
       let cacheBustedHtmlTag = htmlTag;
-      if (cacheBustingMap) {
+      if (buildPreResult) {
+        const { cacheBustingMap } = buildPreResult;
+
         for (const [name, cacheBustedName] of Object.entries(cacheBustingMap)) {
           cacheBustedHtmlTag = cacheBustedHtmlTag.replaceAll(
             name,
