@@ -232,3 +232,13 @@ blockquote {
     --pico-font-size: 118.75% !important;
   }
 }
+
+/*
+Fix warning in Firefox:
+
+Found a sectioned h1 element with no specified font-size or margin properties. More information: https://developer.mozilla.org/docs/Web/HTML/Element/Heading_Elements#specifying_a_uniform_font_size_for_h1
+*/
+:where(h1) {
+  margin-block: 0.67em;
+  font-size: 2em;
+}
