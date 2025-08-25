@@ -20,7 +20,6 @@
 - Better dropdown in main page nav
 - Sitemap XML
   - https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap#xml
-- Turn homepage into MDX?
 - RSS?
 - Add global "last published/updated/whatever" meta tag on build
 - `ld+json` (e.g. a `BlogPosting`)
@@ -35,7 +34,6 @@
   }
   </script>
   ```
-- Reduce FOUC
 - Latest blog posts in frontpage
 - Last updated (maybe even guess from Git? override via blog post export anyways)
 - High priority inserts?
