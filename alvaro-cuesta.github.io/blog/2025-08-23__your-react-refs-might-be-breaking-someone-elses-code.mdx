@@ -99,7 +99,7 @@ Just like `<div>` has a `ref` prop to receive React refs, you often need to prov
 
 ```tsx
 function TextInput({ ref }: { ref?: Ref<HTMLInputElement> }) {
-  return <input type={text} ref={ref} />;
+  return <input type="text" ref={ref} />;
 }
 
 // Now other components can access the internal <input> like this:
