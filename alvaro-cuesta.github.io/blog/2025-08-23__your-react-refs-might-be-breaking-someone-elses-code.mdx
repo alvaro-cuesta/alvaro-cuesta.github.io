@@ -49,8 +49,8 @@ function App() {
 ...will print:
 
 1. `Inserted` on initial mount, when the `<div>` HTML element is inserted into the DOM.
-2. `Removed` and then `Inserted` on every `<button>` click (or any other re-render). This happens regardless of actual
-   DOM insertions/removals.
+2. `Removed` and then `Inserted` on every `<button>` click (or any other re-render). **This happens regardless of actual
+   DOM insertions/removals.**
 3. `Removed` on unmount, when the `<div>` HTML element is removed from the DOM.
 
 We can fix this issue by making the function reference stable across renders, for example, by wrapping it in
@@ -91,9 +91,26 @@ function App() {
 1. `Inserted` on initial mount.
 2. `Removed` on unmount.
 
+Notice the callback is no longer called on button clicks.
+
 # Merging refs
 
-Just like `<div>` has a `ref` prop to receive React refs, you often need to provide refs for your own components too.
+Just like `<div>` has a `ref` prop to receive React refs, you often need to provide `ref` props for your own components.
+
+```tsx
+function TextInput({ ref }: { ref?: Ref<HTMLInputElement> }) {
+  return <input type={text} ref={ref} />;
+}
+
+// Now other components can access the internal <input> like this:
+function App() {
+  const inputRef = useRef(null);
+  /* ... do stuff with `inputRef` ... */
+
+  return <TextInput ref={ref} />;
+}
+```
+
 Low&#x2060;-&#x2060;level UI components often need to use their own refs while also forwarding external ones, like this:
 
 ```tsx
