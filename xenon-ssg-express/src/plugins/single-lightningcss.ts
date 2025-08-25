@@ -22,6 +22,7 @@ type SingleLightningCssPluginOptions = {
    * - `undefined` to calculate from input file hash
    */
   cacheBustingFragment?: string | false | undefined;
+  critical?: boolean;
 };
 
 type SingleLightningCssPluginBuildPreResult = { cacheBustedPathname: string };
@@ -32,6 +33,7 @@ export const singleLightningCssPlugin =
     outputFilename,
     mountPointFragments = [],
     cacheBustingFragment,
+    critical,
   }: SingleLightningCssPluginOptions): Plugin<SingleLightningCssPluginBuildPreResult> =>
   () => {
     const pathname = `/${[...mountPointFragments, outputFilename].join("/")}`;
@@ -102,6 +104,7 @@ export const singleLightningCssPlugin =
       {
         tagType: "stylesheet" as const,
         href: buildPreResult?.cacheBustedPathname ?? pathname,
+        critical,
       },
     ];
 

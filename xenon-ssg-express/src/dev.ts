@@ -2,7 +2,7 @@ import express, { type Express } from "express";
 import { makeXenonMiddleware } from "xenon-ssg/src/middleware";
 import morgan from "morgan";
 import { type XenonExpressSite, getSiteMeta } from ".";
-import { getTagsFromInjectable } from "./plugins/plugins";
+import { getTagsFromInjectableRaw } from "./plugins/plugins";
 
 export const DEFAULT_DEV_PORT = 1337;
 
@@ -29,10 +29,17 @@ export const makeXenonDevExpressApp = (site: XenonExpressSite): Express => {
     return runnablePlugin.getInjectable?.(undefined) ?? [];
   });
 
-  const injectable = getTagsFromInjectable(injectableRaw);
+  const { injectable, injectableCritical } =
+    getTagsFromInjectableRaw(injectableRaw);
 
   const render = (pathname: string) =>
-    site.render({ ...siteMeta, pathname, injectable, injectableRaw });
+    site.render({
+      ...siteMeta,
+      pathname,
+      injectableRaw,
+      injectable,
+      injectableCritical,
+    });
 
   app.use(makeXenonMiddleware(render, site.renderToStreamOptions));
 

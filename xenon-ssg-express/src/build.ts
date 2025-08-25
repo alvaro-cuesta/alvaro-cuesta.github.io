@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { generateStaticSite } from "xenon-ssg/src/generate/generate";
 import { type XenonExpressSite, getSiteMeta } from ".";
-import { getTagsFromInjectable } from "./plugins/plugins";
+import { getTagsFromInjectableRaw } from "./plugins/plugins";
 
 type BuildXenonSiteOptions = {
   outputDir?: string;
@@ -42,12 +42,19 @@ export const buildXenonExpressSite = async (
 
   const injectableRaw = injectableRaws.flat();
 
-  const injectable = getTagsFromInjectable(injectableRaw);
+  const { injectable, injectableCritical } =
+    getTagsFromInjectableRaw(injectableRaw);
 
   console.debug("\nGenerating static site:");
 
   const render = (pathname: string) =>
-    site.render({ ...siteMeta, pathname, injectableRaw, injectable });
+    site.render({
+      ...siteMeta,
+      pathname,
+      injectableRaw,
+      injectable,
+      injectableCritical,
+    });
 
   await generateStaticSite(render, {
     entryPaths: entryPaths,

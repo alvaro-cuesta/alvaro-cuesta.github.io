@@ -13,6 +13,7 @@ export type XenonExpressRenderMeta = XenonExpressSiteMeta & {
   pathname: string;
   injectableRaw: PluginInjectableTag[];
   injectable: ReactNode[];
+  injectableCritical: ReactNode[];
 };
 
 export type XenonExpressRenderFunction = (

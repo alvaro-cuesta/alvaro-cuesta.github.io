@@ -45,10 +45,9 @@ export type PluginInjectableMeta = {
   content: string;
 };
 
-export type PluginInjectableTag =
-  | PluginInjectableStylesheet
-  | PluginInjectableLink
-  | PluginInjectableMeta;
+export type PluginInjectableTag = {
+  critical?: boolean | undefined;
+} & (PluginInjectableStylesheet | PluginInjectableLink | PluginInjectableMeta);
 
 export type PluginGetInjectableFunction<R> = (
   /**
@@ -91,33 +90,45 @@ export type Plugin<R = unknown> = (
   siteMeta: XenonExpressSiteMeta,
 ) => RunnablePlugin<R> | undefined;
 
-export function getTagsFromInjectable(
+function renderInjectableRaw(tag: PluginInjectableTag, index: number) {
+  switch (tag.tagType) {
+    case "stylesheet":
+      return <link key={index} rel="stylesheet" href={tag.href} />;
+
+    case "link":
+      return (
+        <link
+          key={index}
+          rel={tag.rel}
+          type={tag.type}
+          title={tag.title}
+          sizes={tag.sizes}
+          media={tag.media}
+          href={tag.href}
+        />
+      );
+
+    case "meta":
+      return <meta key={index} name={tag.name} content={tag.content} />;
+
+    default:
+      // @ts-expect-error This should never happen
+      throw new Error(`Unknown injectable tag type: ${tag.type}`);
+  }
+}
+
+export function getTagsFromInjectableRaw(
   injectableRaw: PluginInjectableTag[],
-): ReactNode[] {
-  return injectableRaw.map((tag, index) => {
-    switch (tag.tagType) {
-      case "stylesheet":
-        return <link key={index} rel="stylesheet" href={tag.href} />;
-
-      case "link":
-        return (
-          <link
-            key={index}
-            rel={tag.rel}
-            type={tag.type}
-            title={tag.title}
-            sizes={tag.sizes}
-            media={tag.media}
-            href={tag.href}
-          />
-        );
-
-      case "meta":
-        return <meta key={index} name={tag.name} content={tag.content} />;
-
-      default:
-        // @ts-expect-error This should never happen
-        throw new Error(`Unknown injectable tag type: ${tag.type}`);
-    }
-  });
+): {
+  injectable: ReactNode[];
+  injectableCritical: ReactNode[];
+} {
+  return {
+    injectable: injectableRaw
+      .filter((x) => !x.critical)
+      .map(renderInjectableRaw),
+    injectableCritical: injectableRaw
+      .filter((x) => x.critical)
+      .map(renderInjectableRaw),
+  };
 }

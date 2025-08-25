@@ -45,6 +45,7 @@ export const picoCss = staticFilePlugin({
   outputFilename: PICO_FILE,
   mountPointFragments: ["css", "pico"],
   injectAs: "stylesheet",
+  critical: true,
 });
 
 const FONTAWESOME_FILE = "all.min.css";
@@ -56,6 +57,7 @@ export const fontAwesomeCss = staticFilePlugin({
   outputFilename: FONTAWESOME_FILE,
   mountPointFragments: ["css", "fontawesome", "css"],
   injectAs: "stylesheet",
+  critical: true,
 });
 
 const FONTAWESOME_WEBFONTS_PATH = path.join(
@@ -78,6 +80,7 @@ export const indexCss = singleLightningCssPlugin({
   inputFilepath: INDEX_CSS_PATH,
   outputFilename: "index.min.css",
   mountPointFragments: ["css"],
+  critical: true,
 });
 
 const STARRY_NIGHT_FILE = "both";
@@ -88,6 +91,7 @@ export const starryNightCss = singleLightningCssPlugin({
   inputFilepath: STARRY_NIGHT_FILE_PATH,
   outputFilename: `${STARRY_NIGHT_FILE}.css`,
   mountPointFragments: ["css", "starry-night"],
+  critical: true,
 });
 
 export const makeSite = async (): Promise<XenonExpressSite> => {

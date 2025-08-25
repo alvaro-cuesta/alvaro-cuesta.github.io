@@ -15,14 +15,22 @@ type StaticFilePluginOptions = {
   inputFilepath: string;
   outputFilename: string;
   mountPointFragments?: string[];
-  injectAs?: "stylesheet";
   /**
    * - `string` to manually control fragment
    * - `false` to disable cache busting
    * - `undefined` to calculate from input file hash
    */
   cacheBustingFragment?: string | false | undefined;
-};
+} & (
+  | {
+      injectAs?: "stylesheet";
+      critical?: boolean;
+    }
+  | {
+      injectAs?: never;
+      critical?: never;
+    }
+);
 
 type StaticFilePluginBuildPreResult = { cacheBustedPathname: string };
 
@@ -33,6 +41,7 @@ export const staticFilePlugin =
     mountPointFragments = [],
     injectAs,
     cacheBustingFragment,
+    critical,
   }: StaticFilePluginOptions): Plugin<StaticFilePluginBuildPreResult> =>
   () => {
     const pathname = `/${[...mountPointFragments, outputFilename].join("/")}`;
@@ -79,6 +88,7 @@ export const staticFilePlugin =
             {
               tagType: "stylesheet" as const,
               href: buildPreResult?.cacheBustedPathname ?? pathname,
+              critical,
             },
           ]
         : undefined;

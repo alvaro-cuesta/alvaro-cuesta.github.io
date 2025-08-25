@@ -72,6 +72,8 @@ export const Template: React.FC<TemplateProps> = ({
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
         <meta name="darkreader-lock" />
 
+        {siteRenderMeta.injectableCritical}
+
         {/* Common */}
         <title>{metaTags.title}</title>
         {metaTags.description ? (
@@ -202,6 +204,7 @@ export const Template: React.FC<TemplateProps> = ({
 
         {siteRenderMeta.injectable}
       </head>
+
       <body>
         <header className="container">
           <nav>
