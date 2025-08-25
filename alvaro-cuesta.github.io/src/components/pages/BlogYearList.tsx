@@ -4,6 +4,11 @@ import { BlogListsLayout } from "../molecules/BlogListsLayout";
 import { Link } from "../atoms/Link";
 import type { SiteRenderMeta } from "../../site";
 import { routeBlogYear, routeBlogYearList } from "../../routes";
+import {
+  BLOG_BLURB_DESCRIPTION,
+  makeBlogBlurbSocialDescription,
+} from "../../../config";
+import { makeTitle } from "../../utils/meta";
 
 type BlogYearListProps = {
   siteRenderMeta: SiteRenderMeta;
@@ -14,22 +19,16 @@ export const BlogYearList: React.FC<BlogYearListProps> = ({
 }) => {
   const blogItems = useBlogItems();
 
-  const description = "Álvaro Cuesta's personal blog (all years)";
-
   return (
     <Template
-      title="All years | Blog"
       siteRenderMeta={siteRenderMeta}
-      metaTags={
-        <>
-          <meta name="description" content={description} />
-          <meta property="og:type" content="website" />
-          <meta property="og:title" content="Álvaro Cuesta's Blog" />
-          <meta property="og:description" content={description} />
-          <meta property="og:image" content={siteRenderMeta.defaultOgImage} />
-          <meta name="twitter:card" content="summary" />
-        </>
-      }
+      metaTags={{
+        title: makeTitle(["Blog", "All years"]),
+        description: BLOG_BLURB_DESCRIPTION,
+        socialTitle: makeTitle(["Blog"]),
+        socialDescription: makeBlogBlurbSocialDescription("articles by year"),
+        openGraph: { type: "website" },
+      }}
     >
       <BlogListsLayout
         breadcrumbs={[{ name: "Years", href: routeBlogYearList.build({}) }]}

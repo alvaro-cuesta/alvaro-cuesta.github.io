@@ -5,6 +5,11 @@ import { useBlogItems } from "../../blog/promise";
 import { BlogArticleListItem } from "../molecules/BlogArticleListItem";
 import type { SiteRenderMeta } from "../../site";
 import { routeBlogArticleList } from "../../routes";
+import { makeTitle } from "../../utils/meta";
+import {
+  BLOG_BLURB_DESCRIPTION,
+  makeBlogBlurbSocialDescription,
+} from "../../../config";
 
 type BlogArticleListProps = {
   siteRenderMeta: SiteRenderMeta;
@@ -40,29 +45,23 @@ export const BlogArticleList: React.FC<BlogArticleListProps> = ({
     page: page === 1 ? null : page,
   });
 
-  const description = `Álvaro Cuesta's personal blog${
-    page !== 1 ? ` (page ${page})` : "."
-  }`;
-
   return (
     <Template
-      title="Blog"
       siteRenderMeta={siteRenderMeta}
       canonicalPathname={canonicalPathname}
-      metaTags={
-        <>
-          <meta name="description" content={description} />
-          <meta property="og:type" content="website" />
-          <meta property="og:title" content="Álvaro Cuesta's Blog" />
-          <meta property="og:description" content={description} />
-          <meta property="og:image" content={siteRenderMeta.defaultOgImage} />
-          <meta name="twitter:card" content="summary" />
-        </>
-      }
+      metaTags={{
+        title: makeTitle(["Blog", page > 1 && `Page ${page}`]),
+        description: BLOG_BLURB_DESCRIPTION,
+        socialTitle: makeTitle(["Blog"]),
+        socialDescription: makeBlogBlurbSocialDescription(
+          page > 1 ? `page ${page}` : undefined,
+        ),
+        openGraph: { type: "website" },
+      }}
     >
       <BlogListsLayout
         breadcrumbs={
-          page !== 1 && totalPages > 1
+          page > 1 && totalPages > 1
             ? [
                 {
                   name: `Page ${page} of ${totalPages}`,

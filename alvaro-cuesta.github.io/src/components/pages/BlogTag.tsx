@@ -4,6 +4,11 @@ import { useBlogItems } from "../../blog/promise";
 import { BlogArticleListItem } from "../molecules/BlogArticleListItem";
 import type { SiteRenderMeta } from "../../site";
 import { routeBlogTag, routeBlogTagList } from "../../routes";
+import { makeTitle } from "../../utils/meta";
+import {
+  BLOG_BLURB_DESCRIPTION,
+  makeBlogBlurbSocialDescription,
+} from "../../../config";
 
 type BlogTagProps = {
   siteRenderMeta: SiteRenderMeta;
@@ -21,22 +26,16 @@ export const BlogTag: React.FC<BlogTagProps> = ({ siteRenderMeta, tag }) => {
 
   // TODO: Pagination?
 
-  const description = `Álvaro Cuesta's personal blog (tag "${tag})"`;
-
   return (
     <Template
-      title={`Tag "${tag}" | Blog`}
       siteRenderMeta={siteRenderMeta}
-      metaTags={
-        <>
-          <meta name="description" content={description} />
-          <meta property="og:type" content="website" />
-          <meta property="og:title" content="Álvaro Cuesta's Blog" />
-          <meta property="og:description" content={description} />
-          <meta property="og:image" content={siteRenderMeta.defaultOgImage} />
-          <meta name="twitter:card" content="summary" />
-        </>
-      }
+      metaTags={{
+        title: makeTitle(["Blog", `Tag "${tag}"`]),
+        description: BLOG_BLURB_DESCRIPTION,
+        socialTitle: makeTitle(["Blog"]),
+        socialDescription: makeBlogBlurbSocialDescription(`tag ${tag}`),
+        openGraph: { type: "website" },
+      }}
     >
       <BlogListsLayout
         breadcrumbs={[

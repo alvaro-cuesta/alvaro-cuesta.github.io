@@ -9,7 +9,6 @@
 - Try to use filter for highlight, or at least shomehow highlight `#projects`
 - Blog posts
   - Comments from GH issues?
-  - Ensure it has proper OG meta tags (and overrides the global ones)
   - Add manual description OR autodescription https://github.com/rehypejs/rehype-infer-description-meta
   - Add reading time https://github.com/rehypejs/rehype-infer-reading-time-meta
   - Add autoembed
@@ -25,6 +24,20 @@
 - RSS?
 - Add global "last published/updated/whatever" meta tag on build
 - `ld+json` (e.g. a `BlogPosting`)
+  ```
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "My Article Title",
+    "datePublished": "2025-08-25T12:00:00Z",
+    "dateModified": "2025-08-26T09:00:00Z"
+  }
+  </script>
+  ```
 - Reduce FOUC
 - Latest blog posts in frontpage
-- Last updated in blog posts (maybe even guess from Git?)
+- Last updated (maybe even guess from Git? override via blog post export anyways)
+- High priority inserts?
+- Preload fonts?
+- Font swap?

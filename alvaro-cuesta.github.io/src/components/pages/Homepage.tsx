@@ -3,6 +3,11 @@ import { Link } from "../atoms/Link";
 import { Icon } from "../atoms/Icon";
 import { Template } from "../Template";
 import type { SiteRenderMeta } from "../../site";
+import { makeTitle } from "../../utils/meta";
+import {
+  HOMEPAGE_BLURB_DESCRIPTION,
+  HOMEPAGE_BLURB_SOCIAL_DESCRIPTION,
+} from "../../../config";
 
 const WEB_PROGRAMMING_START_YEAR = 2009;
 
@@ -36,23 +41,25 @@ export type HomepageProps = {
 export const Homepage: React.FC<HomepageProps> = ({ siteRenderMeta }) => {
   const year = new Date().getFullYear();
 
-  const description = "Álvaro Cuesta's personal website.";
+  const title = makeTitle(["Full-stack software engineer"], {
+    disableReverse: true,
+  });
 
   return (
     <Template
-      title="Full-stack software engineer"
-      titleOrder="site-first"
       siteRenderMeta={siteRenderMeta}
-      metaTags={
-        <>
-          <meta name="description" content={description} />
-          <meta property="og:type" content="website" />
-          <meta property="og:title" content="Álvaro Cuesta" />
-          <meta property="og:description" content={description} />
-          <meta property="og:image" content={siteRenderMeta.defaultOgImage} />
-          <meta name="twitter:card" content="summary" />
-        </>
-      }
+      metaTags={{
+        title,
+        description: HOMEPAGE_BLURB_DESCRIPTION,
+        socialTitle: title,
+        socialDescription: HOMEPAGE_BLURB_SOCIAL_DESCRIPTION,
+        openGraph: {
+          type: "profile",
+          firstName: "Álvaro",
+          lastName: "Cuesta",
+          gender: "male",
+        },
+      }}
     >
       <section>
         <h2>Full-stack software engineer</h2>

@@ -12,6 +12,7 @@ import { BlogDateTime } from "../atoms/BlogDateTime";
 import { Icon } from "../atoms/Icon";
 import { BlogArticleContent } from "../molecules/BlogArticleContent";
 import { routeBlogArticle, routeBlogTag } from "../../routes";
+import { makeTitle } from "../../utils/meta";
 
 type BlogArticleProps = {
   siteRenderMeta: SiteRenderMeta;
@@ -32,7 +33,7 @@ export const BlogArticle: React.FC<BlogArticleProps> = ({
 
   const {
     module: {
-      title,
+      title: articleTitle,
       publicationDate,
       lastModificationDate: lastModificationDateRaw,
       draft,
@@ -54,45 +55,53 @@ export const BlogArticle: React.FC<BlogArticleProps> = ({
 
   return (
     <Template
-      title={title}
       siteRenderMeta={siteRenderMeta}
-      metaTags={
-        <>
-          <meta property="og:type" content="article" />
-          <meta property="og:title" content={title} />
-          <meta property="og:image" content={siteRenderMeta.defaultOgImage} />
-          <meta property="article:author" content="Álvaro Cuesta" />
-          <meta
-            property="article:published_time"
-            content={blogItemDateToUTCISO8601Z(publicationDate)}
-          />
-          {lastModificationDateISOZ !== null ? (
-            <>
-              <meta
-                property="article:modified_time"
-                content={lastModificationDateISOZ}
-              />
-              <meta
-                property="og:updated_time"
-                content={lastModificationDateISOZ}
-              />
-            </>
-          ) : null}
-          {tags.map((tag) => (
-            <meta property="article:tag" content={tag} key={tag} />
-          ))}
-          <meta name="twitter:card" content="summary" />
-        </>
-      }
+      metaTags={{
+        title: makeTitle(["Blog", articleTitle]),
+        socialTitle: articleTitle,
+        socialDescription:
+          tags.length >= 3
+            ? `Read about ${tags.slice(0, 2).join(", ")}, and more in this article by Álvaro Cuesta.`
+            : tags.length === 2
+              ? `Read about ${tags[0]} and ${tags[1]} in this article by Álvaro Cuesta.`
+              : tags.length === 1
+                ? `Read about ${tags[0]} in this article by Álvaro Cuesta.`
+                : "Read this article by Álvaro Cuesta.",
+        openGraph: {
+          type: "article",
+          authorProfileUrl: siteRenderMeta.baseUrl,
+          tags,
+        },
+        additional: (
+          <>
+            <meta
+              property="article:published_time"
+              content={blogItemDateToUTCISO8601Z(publicationDate)}
+            />
+            {lastModificationDateISOZ !== null ? (
+              <>
+                <meta
+                  property="article:modified_time"
+                  content={lastModificationDateISOZ}
+                />
+                <meta
+                  property="og:updated_time"
+                  content={lastModificationDateISOZ}
+                />
+              </>
+            ) : null}
+          </>
+        ),
+      }}
     >
       <BlogListsLayout
-        breadcrumbs={[{ name: title, href: articlePath }]}
+        breadcrumbs={[{ name: articleTitle, href: articlePath }]}
         blogItems={blogItems}
       >
         <header>
           <div>
             <h2 className="no-underline">
-              <Link href={articlePath}>{title}</Link>
+              <Link href={articlePath}>{articleTitle}</Link>
               {draft ? " (draft)" : ""}
             </h2>
           </div>
