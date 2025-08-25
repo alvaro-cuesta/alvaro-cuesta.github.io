@@ -28,7 +28,6 @@
     "@wooorm/starry-night": "^3.4.0",
     "classnames": "^2.5.1",
     "fontawesome-free": "^1.0.4",
-    "lightningcss": "^1.25.1",
     "path-to-regexp": "^8.2.0",
     "react": "^18.3.1",
     "recma-mdx-is-mdx-component": "^1.1.3",

@@ -9,7 +9,6 @@ import {
   blogItemDateToUTCISO8601Z,
   type BlogItemDate,
 } from "../blog/item-dates";
-import { transform } from "lightningcss";
 
 type TemplateProps = {
   siteRenderMeta: SiteRenderMeta;
@@ -51,51 +50,6 @@ type TemplateMetaTagsOpenGraph =
       gender?: "male" | "female";
     };
 
-// Very basic styles that kinda look like pico.blue.css
-// Needed to avoid FOUC
-const CRITICAL_STYLES_CODE = `
-  @media not (prefers-color-scheme: dark) {
-    :root {
-      /* --pico-color */
-      color: #373c44;
-      /* --pico-background-color */
-      background-color: #fff;
-
-      a {
-        /* --pico-primary */
-        color: #2060df;
-      }
-    }
-  }
-
-  @media only screen and (prefers-color-scheme: dark) {
-    :root {
-      /* --pico-color */
-      color: #c2c7d0;
-      /* --pico-background-color */
-      background-color: #13171f;
-
-      a {
-        /* --pico-primary */
-        color: #8999f9;
-      }
-    }
-  }
-`;
-
-const { code: CRITICAL_STYLES, warnings: CRITICAL_STYLES_WARNINGS } = transform(
-  {
-    filename: "index.css",
-    code: new TextEncoder().encode(CRITICAL_STYLES_CODE),
-    minify: true,
-    sourceMap: false,
-  },
-);
-
-if (CRITICAL_STYLES_WARNINGS.length > 0) {
-  console.warn(CRITICAL_STYLES_WARNINGS);
-}
-
 export const Template: React.FC<TemplateProps> = ({
   siteRenderMeta,
   canonicalPathname = siteRenderMeta.pathname,
@@ -114,8 +68,6 @@ export const Template: React.FC<TemplateProps> = ({
     <html lang="en" prefix="og: http://ogp.me/ns#">
       <head>
         <meta charSet="utf-8" />
-
-        <style dangerouslySetInnerHTML={{ __html: CRITICAL_STYLES }} />
 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
