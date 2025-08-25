@@ -33,7 +33,9 @@ export const buildXenonExpressSite = async (
 
   const injectableRaws = await Promise.all(
     plugins.map(async (runnablePlugin) => {
-      const buildPreResult = await runnablePlugin.buildPre?.(outputDir);
+      const buildPreResult = await runnablePlugin.buildPre?.({
+        baseOutputFolder: outputDir,
+      });
       return runnablePlugin.getInjectable?.(buildPreResult) ?? [];
     }),
   );
@@ -56,7 +58,7 @@ export const buildXenonExpressSite = async (
   console.debug("\nRunning plugins (post):");
 
   for (const plugin of plugins) {
-    await plugin.buildPost?.(outputDir);
+    await plugin.buildPost?.({ baseOutputFolder: outputDir });
   }
 
   console.log("\nAll done!");
