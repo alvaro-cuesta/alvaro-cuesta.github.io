@@ -4,12 +4,15 @@ import { Root } from "./Root";
 // TODO: Make this a generic middleware and not Express-specific (if such a thing exists)
 import type { Request, Response, NextFunction } from "express";
 import type { XenonRenderFunction } from ".";
+import type { UnknownRecord } from "type-fest";
 
 const doNothing = () => {};
 
-export const makeXenonMiddleware =
-  (render: XenonRenderFunction, options?: RenderToStreamOptions) =>
-  (req: Request, res: Response, next: NextFunction) => {
+export function makeXenonMiddleware<PageMetadata extends UnknownRecord>(
+  render: XenonRenderFunction<PageMetadata>,
+  options?: RenderToStreamOptions,
+) {
+  return (req: Request, res: Response, next: NextFunction) => {
     const { pathname } = canonicalizeHref(req.path);
 
     const renderedStream = renderToStream(
@@ -28,3 +31,4 @@ export const makeXenonMiddleware =
 
     renderedStream.pipe(res);
   };
+}

@@ -3,6 +3,7 @@ import type { PluginInjectableTag, Plugin } from "./plugins/plugins";
 import type { ReactNode } from "react";
 import { DEFAULT_DEV_PORT } from "./dev";
 import type { XenonRenderFunction } from "xenon-ssg/src";
+import type { UnknownRecord } from "type-fest";
 
 export type XenonExpressSiteMeta = {
   origin: string;
@@ -17,18 +18,23 @@ export type XenonExpressRenderMeta = XenonExpressSiteMeta & {
   injectableCritical: ReactNode[];
 };
 
-export type XenonExpressRenderFunction = (
+export type XenonExpressRenderFunction<PageMetadata extends UnknownRecord> = (
   meta: XenonExpressRenderMeta,
-) => ReturnType<XenonRenderFunction>;
+) => ReturnType<XenonRenderFunction<PageMetadata>>;
 
-export type XenonExpressSite = {
-  render: XenonExpressRenderFunction;
+export type XenonExpressSite<
+  PageMetadata extends UnknownRecord,
+  Plugins extends Plugin<unknown, PageMetadata>[] = Plugin<any, PageMetadata>[],
+> = {
+  render: XenonExpressRenderFunction<PageMetadata>;
   renderToStreamOptions: RenderToStreamOptions;
-  plugins: Plugin<any>[];
+  plugins: Plugins;
   devPort?: number;
 };
 
-export const getSiteMeta = (site: XenonExpressSite): XenonExpressSiteMeta => {
+export function getSiteMeta<PageMetadata extends UnknownRecord>(
+  site: XenonExpressSite<PageMetadata>,
+): XenonExpressSiteMeta {
   const origin =
     process.env["XENON_ORIGIN"] ??
     `http://localhost:${site.devPort ?? DEFAULT_DEV_PORT}`;
@@ -40,4 +46,4 @@ export const getSiteMeta = (site: XenonExpressSite): XenonExpressSiteMeta => {
     basepath,
     baseUrl: `${origin}${basepath}`,
   };
-};
+}

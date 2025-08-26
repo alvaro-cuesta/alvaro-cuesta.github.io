@@ -2,6 +2,7 @@ import type { Express } from "express";
 import type { XenonExpressSiteMeta } from "..";
 import type { ReactNode } from "react";
 import type { XenonGeneratedPage } from "xenon-ssg/src/generate/generate";
+import type { UnknownRecord } from "type-fest";
 
 export type PluginAttachToExpressFunction = (app: Express) => void;
 
@@ -10,18 +11,18 @@ export type PluginBuildPreOptions = {
   baseOutputFolder: string;
 };
 
-export type PluginBuildPreFunction<R = unknown> = (
+export type PluginBuildPreFunction<BuildPreResult = unknown> = (
   options: PluginBuildPreOptions,
-) => Promise<R>;
+) => Promise<BuildPreResult>;
 
-export type PluginBuildPostOptions = {
+export type PluginBuildPostOptions<PageMetadata extends UnknownRecord> = {
   siteMeta: XenonExpressSiteMeta;
   baseOutputFolder: string;
-  generatedPages: XenonGeneratedPage[];
+  generatedPages: XenonGeneratedPage<PageMetadata>[];
 };
 
-export type PluginBuildPostFunction = (
-  options: PluginBuildPostOptions,
+export type PluginBuildPostFunction<PageMetadata extends UnknownRecord> = (
+  options: PluginBuildPostOptions<PageMetadata>,
 ) => Promise<void>;
 
 export type PluginInjectableStylesheet = {
@@ -51,16 +52,19 @@ export type PluginInjectableTag = {
   critical?: boolean | undefined;
 } & (PluginInjectableStylesheet | PluginInjectableLink | PluginInjectableMeta);
 
-export type PluginGetInjectableFunction<R> = (
+export type PluginGetInjectableFunction<BuildPreResult> = (
   /**
    * Value returned from {@link RunnablePlugin.buildPre}.
    *
    * Will be `undefined` if the plugin is running in dev mode.
    */
-  buildPreResult: R | undefined,
+  buildPreResult: BuildPreResult | undefined,
 ) => PluginInjectableTag[] | undefined;
 
-export type RunnablePlugin<R = unknown> = {
+export type RunnablePlugin<
+  BuildPreResult,
+  PageMetadata extends UnknownRecord,
+> = {
   /**
    * Attaches the plugin to Express during `dev` mode.
    */
@@ -69,28 +73,31 @@ export type RunnablePlugin<R = unknown> = {
   /**
    * Builds the plugin during `build` mode. Runs before the static site is generated.
    */
-  buildPre?: PluginBuildPreFunction<R> | undefined;
+  buildPre?: PluginBuildPreFunction<BuildPreResult> | undefined;
 
   /**
    * Builds the plugin during `build` mode. Runs after the static site is generated.
    */
-  buildPost?: PluginBuildPostFunction | undefined;
+  buildPost?: PluginBuildPostFunction<PageMetadata> | undefined;
 
   /**
    * Injectable tags that can be used by the plugin.
    *
    * For example, a CSS file can be injected into the HTML head.
    */
-  getInjectable?: PluginGetInjectableFunction<R> | undefined;
+  getInjectable?: PluginGetInjectableFunction<BuildPreResult> | undefined;
 };
 
 /**
  * Can return `undefined` if the plugin doesn't need to do anything. Useful if you want to disable the plugin with some
  * specific options for example.
  */
-export type Plugin<R = unknown> = (
+export type Plugin<
+  BuildPreResult = unknown,
+  PageMetadata extends UnknownRecord = UnknownRecord,
+> = (
   siteMeta: XenonExpressSiteMeta,
-) => RunnablePlugin<R> | undefined;
+) => RunnablePlugin<BuildPreResult, PageMetadata> | undefined;
 
 function renderInjectableRaw(tag: PluginInjectableTag, index: number) {
   switch (tag.tagType) {

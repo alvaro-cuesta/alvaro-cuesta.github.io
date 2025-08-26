@@ -1,4 +1,5 @@
 import type {
+  XenonExpressRenderFunction,
   XenonExpressRenderMeta,
   XenonExpressSite,
 } from "xenon-ssg-express/src";
@@ -11,13 +12,20 @@ import { faviconPlugin } from "xenon-ssg-express/src/plugins/favicon";
 import { version } from "../package.json" with { type: "json" };
 import type { PluginInjectableLink } from "xenon-ssg-express/src/plugins/plugins";
 import { Root } from "./components/Root";
-import { sitemapPlugin } from "xenon-ssg-express/src/plugins/sitemap";
+import {
+  sitemapPlugin,
+  sitemapPluginKey,
+  type SitemapPluginMetadata,
+} from "xenon-ssg-express/src/plugins/sitemap";
 
 export type SiteRenderMeta = XenonExpressRenderMeta & {
   defaultOgImage: string;
 };
 
-const render = (renderMeta: XenonExpressRenderMeta) => {
+// TODO: changing the type here won't make the other fail
+const render: XenonExpressRenderFunction<SitemapPluginMetadata> = (
+  renderMeta,
+) => {
   const defaultOgImageHref = renderMeta.injectableRaw?.find(
     (tag): tag is PluginInjectableLink =>
       tag.tagType === "link" &&
@@ -38,6 +46,9 @@ const render = (renderMeta: XenonExpressRenderMeta) => {
 
   return {
     reactNode: <Root siteRenderMeta={siteRenderMeta} />,
+    metadata: {
+      [sitemapPluginKey]: { priority: 0.5 },
+    },
   };
 };
 
@@ -101,7 +112,9 @@ const sitemap = sitemapPlugin({
   outputFilename: "sitemap.xml",
 });
 
-export const makeSite = async (): Promise<XenonExpressSite> => {
+export async function makeSite(): Promise<
+  XenonExpressSite<SitemapPluginMetadata>
+> {
   const favicon = await faviconPlugin({
     inputFilepath: path.join(__dirname, "favicon.svg"),
     faviconOptions: {
@@ -131,4 +144,4 @@ export const makeSite = async (): Promise<XenonExpressSite> => {
       sitemap,
     ],
   };
-};
+}

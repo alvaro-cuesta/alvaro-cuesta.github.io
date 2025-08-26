@@ -3,6 +3,7 @@ import path from "node:path";
 import { generateStaticSite } from "xenon-ssg/src/generate/generate";
 import { type XenonExpressSite, getSiteMeta } from ".";
 import { getTagsFromInjectableRaw } from "./plugins/plugins";
+import type { UnknownRecord } from "type-fest";
 
 type BuildXenonSiteOptions = {
   outputDir?: string;
@@ -12,13 +13,13 @@ type BuildXenonSiteOptions = {
 /**
  * Builds a Xenon site.
  */
-export const buildXenonExpressSite = async (
-  site: XenonExpressSite,
+export async function buildXenonExpressSite<PageMetadata extends UnknownRecord>(
+  site: XenonExpressSite<PageMetadata>,
   {
     outputDir = path.join(process.cwd(), "dist"),
     entryPaths = ["/"],
   }: BuildXenonSiteOptions = {},
-) => {
+) {
   await fs.rm(outputDir, {
     recursive: true,
     force: true,
@@ -74,4 +75,4 @@ export const buildXenonExpressSite = async (
   }
 
   console.log("\nAll done!");
-};
+}

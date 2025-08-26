@@ -39,25 +39,25 @@ type GenerateStaticSiteOptions = {
   renderToStreamOptions?: RenderToStreamOptions;
 };
 
-export type XenonGeneratedPage = {
+export type XenonGeneratedPage<PageMetadata> = {
   pathname: string;
-  metadata?: UnknownRecord | undefined;
+  metadata: PageMetadata;
 };
 
-export const generateStaticSite = async (
+export async function generateStaticSite<PageMetadata extends UnknownRecord>(
   /**
    * Function that returns a React node.
    *
    * The function will be called with the `pathname` to render, relative to the root of the site.
    */
-  renderFn: XenonRenderFunction,
+  renderFn: XenonRenderFunction<PageMetadata>,
   {
     entryPaths = ["/"],
     outputDir = path.join(process.cwd(), "dist"),
     renderToStreamOptions,
   }: GenerateStaticSiteOptions = {},
-): Promise<XenonGeneratedPage[]> => {
-  const generatedPages: XenonGeneratedPage[] = [];
+): Promise<XenonGeneratedPage<PageMetadata>[]> {
+  const generatedPages: XenonGeneratedPage<PageMetadata>[] = [];
 
   const pendingRenderPathnames = new Set(
     mapIter(
@@ -132,4 +132,4 @@ export const generateStaticSite = async (
   }
 
   return generatedPages;
-};
+}

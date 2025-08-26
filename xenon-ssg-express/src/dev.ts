@@ -3,13 +3,16 @@ import { makeXenonMiddleware } from "xenon-ssg/src/middleware";
 import morgan from "morgan";
 import { type XenonExpressSite, getSiteMeta } from ".";
 import { getTagsFromInjectableRaw } from "./plugins/plugins";
+import type { UnknownRecord } from "type-fest";
 
 export const DEFAULT_DEV_PORT = 1337;
 
 /**
  * Create an Express app that serves a Xenon site in development mode.
  */
-export const makeXenonDevExpressApp = (site: XenonExpressSite): Express => {
+export function makeXenonDevExpressApp<PageMetadata extends UnknownRecord>(
+  site: XenonExpressSite<PageMetadata>,
+): Express {
   const app = express();
 
   app.use(morgan("dev"));
@@ -44,12 +47,14 @@ export const makeXenonDevExpressApp = (site: XenonExpressSite): Express => {
   app.use(makeXenonMiddleware(render, site.renderToStreamOptions));
 
   return app;
-};
+}
 
 /**
  * Convenience function if you just want to quickly start a dev server.
  */
-export const startXenonExpressDevApp = (site: XenonExpressSite) => {
+export function startXenonExpressDevApp<PageMetadata extends UnknownRecord>(
+  site: XenonExpressSite<PageMetadata>,
+) {
   const app = makeXenonDevExpressApp(site);
   const port = site.devPort ?? DEFAULT_DEV_PORT;
 
@@ -58,4 +63,4 @@ export const startXenonExpressDevApp = (site: XenonExpressSite) => {
   });
 
   return app;
-};
+}
