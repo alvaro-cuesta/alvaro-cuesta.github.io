@@ -1,4 +1,5 @@
 import { match, compile, type ParamData } from "path-to-regexp";
+import { NeedsTrailingSlashError } from "xenon-ssg-express/src";
 
 type Route<Params> = {
   match: (path: string) => Params | null;
@@ -19,13 +20,21 @@ export function makeRoute<Params extends ParamData, ParsedParams>(
   serialize?: (params: ParsedParams) => Params,
 ): Route<ParsedParams> {
   const matchFn = match<Params>(path);
+  const matchWithoutTrailingFn = path.endsWith("/")
+    ? match<Params>(path.slice(0, -1))
+    : undefined;
+
   const buildFn = compile<Params>(path);
 
   return {
-    match: (path: string) => {
-      const matched = matchFn(path);
+    match: (requestedPath: string) => {
+      const matched = matchFn(requestedPath);
 
       if (matched === false) {
+        if (matchWithoutTrailingFn && matchWithoutTrailingFn(requestedPath)) {
+          throw new NeedsTrailingSlashError(path);
+        }
+
         return null;
       }
 

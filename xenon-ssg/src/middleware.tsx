@@ -5,6 +5,7 @@ import { Root } from "./Root";
 import type { Request, Response, NextFunction } from "express";
 import type { XenonRenderFunction } from ".";
 import type { UnknownRecord } from "type-fest";
+import { NeedsTrailingSlashError } from "xenon-ssg-express/src";
 
 const doNothing = () => {};
 
@@ -15,15 +16,25 @@ export function makeXenonMiddleware<PageMetadata extends UnknownRecord>(
   return (req: Request, res: Response, next: NextFunction) => {
     const { pathname } = canonicalizeHref(req.path);
 
-    const renderedStream = renderToStream(
-      <Root
-        // We don't have to crawl links in middleware mode since we're not pre-rendering anything
-        addLink={doNothing}
-      >
-        {render(pathname).reactNode}
-      </Root>,
-      options,
-    );
+    let renderedStream;
+    try {
+      renderedStream = renderToStream(
+        <Root
+          // We don't have to crawl links in middleware mode since we're not pre-rendering anything
+          addLink={doNothing}
+        >
+          {render(pathname).reactNode}
+        </Root>,
+        options,
+      );
+    } catch (error) {
+      if (error instanceof NeedsTrailingSlashError) {
+        res.redirect(`${pathname}/`);
+        return;
+      }
+
+      return next(error);
+    }
 
     renderedStream.on("error", (error) => {
       next(error);

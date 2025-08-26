@@ -48,3 +48,9 @@ export function getSiteMeta<PageMetadata extends UnknownRecord>(
     baseUrl: `${origin}${basepath}`,
   };
 }
+
+export class NeedsTrailingSlashError extends Error {
+  constructor(path: string) {
+    super(`Path "${path}" needs a trailing slash`);
+  }
+}
