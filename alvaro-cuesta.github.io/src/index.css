@@ -268,6 +268,16 @@ figure:has(> pre) {
     margin: 0 calc(var(--pico-block-spacing-horizontal) * -1)
       var(--pico-block-spacing-vertical);
   }
+
+  figure {
+    margin-left: calc(var(--pico-block-spacing-horizontal) * -1);
+    margin-right: calc(var(--pico-block-spacing-horizontal) * -1);
+  }
+
+  :where(pre):not(figure > pre) {
+    margin-left: calc(var(--pico-block-spacing-horizontal) * -1);
+    margin-right: calc(var(--pico-block-spacing-horizontal) * -1);
+  }
 }
 
 body {
