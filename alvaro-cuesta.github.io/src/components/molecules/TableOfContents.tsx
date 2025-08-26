@@ -5,20 +5,13 @@ import { BlogArticleTableOfContents } from "./BlogArticleTableOfContents";
 export type TableOfContentsProps = {
   tableOfContents: Toc;
   id?: string | undefined;
-  enableTopSeparator?: boolean | undefined;
 };
 
 export const TableOfContents = ({
   tableOfContents,
   id,
-  enableTopSeparator,
 }: TableOfContentsProps) => (
-  <section
-    className={cx(
-      "toc-section",
-      enableTopSeparator && "toc-section-top-separator",
-    )}
-  >
+  <article className={cx("toc-section")}>
     {/* Make sure this matches `rehypeAutolinkHeadings` */}
     <h3 id={id} className="autolink-heading">
       Table of contents
@@ -30,5 +23,5 @@ export const TableOfContents = ({
     </h3>
 
     <BlogArticleTableOfContents tableOfContents={tableOfContents} depth={0} />
-  </section>
+  </article>
 );

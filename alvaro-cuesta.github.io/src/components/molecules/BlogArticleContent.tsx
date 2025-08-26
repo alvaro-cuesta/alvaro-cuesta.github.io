@@ -24,13 +24,13 @@ export const BlogArticleContent: React.FC<BlogArticleContentProps> = ({
         ? {
             components: {
               ...MDX_DEFAULT_COMPONENTS,
-              TableOfContents: ({
-                enableTopSeparator,
-              }: Omit<TableOfContentsProps, "tableOfContents">) => (
+              TableOfContents: (
+                props: Omit<TableOfContentsProps, "tableOfContents">,
+              ) => (
                 <TableOfContents
                   id={DEFAULT_TOC_PERMALINK_ID}
                   tableOfContents={tableOfContents}
-                  enableTopSeparator={enableTopSeparator}
+                  {...props}
                 />
               ),
             },
