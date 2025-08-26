@@ -8,12 +8,9 @@ export const tags = ["react", "bugs", "programming", "javascript"];
 
 # React `ref` callback guarantees
 
-[React's `ref` callbacks](https://react.dev/reference/react-dom/components/common#ref-callback) provide an [important
-guarantee](https://react.dev/reference/react-dom/components/common#caveats) (emphasis mine):
+[React's `ref` callbacks](https://react.dev/reference/react-dom/components/common#ref-callback) provide an [important guarantee](https://react.dev/reference/react-dom/components/common#caveats) (emphasis mine):
 
-> **When you pass a different `ref` callback, React will call the previous callback’s cleanup function if provided.**
-> If no cleanup function is defined, the `ref` callback will be called with `null` as the argument. The next function
-> will be called with the DOM node.
+> **When you pass a different `ref` callback, React will call the previous callback's cleanup function if provided.** If no cleanup function is defined, the `ref` callback will be called with `null` as the argument. The next function will be called with the DOM node.
 
 This means that the following code:
 
@@ -49,12 +46,10 @@ function App() {
 ...will log:
 
 1. `Inserted` on initial mount, when the `<div>` HTML element is inserted into the DOM.
-2. `Removed` and then `Inserted` on every `<button>` click (or any other re-render). **This happens regardless of actual
-   DOM insertions/removals.**
+2. `Removed` and then `Inserted` on every `<button>` click (or any other re-render). **This happens regardless of actual DOM insertions/removals.**
 3. `Removed` on unmount, when the `<div>` HTML element is removed from the DOM.
 
-We can fix this issue by making the function reference stable across renders, for example, by wrapping it in
-`useCallback`:
+We can fix this issue by making the function reference stable across renders, for example, by wrapping it in `useCallback`:
 
 <a id="logging-fixed"></a>
 
@@ -153,9 +148,7 @@ function MyInput() {
 }
 ```
 
-As we saw earlier, [React's `ref` callback guarantees](#react-ref-callback-guarantees) ensure this works flawlessly
-because the callback is **only** called once (when the `<input>` is initially inserted into the DOM). But what happens
-when we want to support an external `ref` from props?
+As we saw earlier, [React's `ref` callback guarantees](#react-ref-callback-guarantees) ensure this works flawlessly because the callback is **only** called once (when the `<input>` is initially inserted into the DOM). But what happens when we want to support an external `ref` from props?
 
 ```tsx caption=codesandbox-4
 import { mergeRefs } from "some-ref-merging-library";
@@ -169,15 +162,13 @@ function MyInput({ externalRef }: { externalRef?: Ref<HTMLInputElement> }) {
 }
 ```
 
-Since `mergeRefs` creates a new function on **every render**, its reference is by definition unstable, causing the same
-issue we saw earlier. Can we fix it the same way as before?
+Since `mergeRefs` creates a new function on **every render**, its reference is by definition unstable, causing the same issue we saw earlier. Can we fix it the same way as before?
 
 Well, **it depends**.
 
 ## External refs might be breaking your code
 
-Let's fix the issue [as we did earlier](#logging-fixed), by memoizing the merged ref so its reference is also stable
-across renders:
+Let's fix the issue [as we did earlier](#logging-fixed), by memoizing the merged ref so its reference is also stable across renders:
 
 ```tsx
 function MyInput({ externalRef }: { externalRef?: Ref<HTMLInputElement> }) {
@@ -197,8 +188,7 @@ function MyInput({ externalRef }: { externalRef?: Ref<HTMLInputElement> }) {
 
 **Can you spot the issue?**
 
-The problem with that code is that **you don't control `externalRef`** so, if it is unstable, the dependencies in `(1)`
-will invalidate and the memoized function will be recreated. If someone uses your component like this:
+The problem with that code is that **you don't control `externalRef`** so, if it is unstable, the dependencies in `(1)` will invalidate and the memoized function will be recreated. If someone uses your component like this:
 
 ```tsx caption=codesandbox-5
 function App() {
@@ -223,11 +213,9 @@ function App() {
 }
 ```
 
-...React will see a new function on every render, and **your input will be focused every time the user clicks the
-_"Increase"_ button**.
+...React will see a new function on every render, and **your input will be focused every time the user clicks the _"Increase"_ button**.
 
-Of course you could say that your component's consumer is breaking your component's API and they should just in turn
-memoize their ref callback as well. That's fine, but the problem is that...
+Of course you could say that your component's consumer is breaking your component's API and they should just in turn memoize their ref callback as well. That's fine, but the problem is that...
 
 ## Components using your ref are breaking your code
 
@@ -259,39 +247,23 @@ function App() {
 
 Again, **can you spot the issue?**
 
-Even if you memoize your callback refs, `SomeoneElsesInput` might merge them with unstable callbacks (possibly even from
-third-party libraries) and create unstable callbacks. This pattern is common across React's ecosystem. The worst part is
-**you cannot fix it** from userland without hacks—you would need to patch `some-ui-library`, manually track reference
-equality to ignore spurious callbacks (which is not always possible) or report the issue and wait for them to fix it.
+Even if you memoize your callback refs, `SomeoneElsesInput` might merge them with unstable callbacks (possibly even from third-party libraries) and create unstable callbacks. This pattern is common across React's ecosystem. The worst part is **you cannot fix it** from userland without hacks—you would need to patch `some-ui-library`, manually track reference equality to ignore spurious callbacks (which is not always possible) or report the issue and wait for them to fix it.
 
-Technically, merging your refs in this way could be a breaking change per [semver](https://semver.org/), but this hidden
-interaction often violates semantic versioning guarantees without being obvious. Adding a ref (in your own private code)
-and merging it with an (already-existing) external ref doesn't _seem_ to affect the public API, **does it**?
+Technically, merging your refs in this way could be a breaking change per [semver](https://semver.org/), but this hidden interaction often violates semantic versioning guarantees without being obvious. Adding a ref (in your own private code) and merging it with an (already-existing) external ref doesn't _seem_ to affect the public API, **does it**?
 
 This is **not** a theoretical concern _(guess how I found this issue?)_
 
 # What can you do about it?
 
-I [reported the issue](https://github.com/gregberge/react-merge-refs/issues/42) to the fantastic [`react-merge-refs`]
-library, which is widely used in the ecosystem. Unfortunately, many
-[other libraries](https://www.npmjs.com/package/merge-refs) implement this small utility too and, to my knowledge,
-**none of them correctly handle this case** (many don't even support [React 19's cleanup functions for
-refs](https://react.dev/blog/2024/12/05/react-19#cleanup-functions-for-refs)!).
+I [reported the issue](https://github.com/gregberge/react-merge-refs/issues/42) to the fantastic [`react-merge-refs`] library, which is widely used in the ecosystem. Unfortunately, many [other libraries](https://www.npmjs.com/package/merge-refs) implement this small utility too and, to my knowledge, **none of them correctly handle this case** (many don't even support [React 19's cleanup functions for refs](https://react.dev/blog/2024/12/05/react-19#cleanup-functions-for-refs)!).
 
-As we have seen, this leads to code breaking: (1) unknowingly, (2) at a distance, (3) both by the consumer and the
-provider, (4) in patch releases and (5) without recourse for the affected parties.
+As we have seen, this leads to code breaking: (1) unknowingly, (2) at a distance, (3) both by the consumer and the provider, (4) in patch releases and (5) without recourse for the affected parties.
 
-So I did what any self-respecting engineer would do: **add another library to the mix**. I published
-[`react-best-merge-refs`] to handle all these edge cases, with thorough
-[unit](https://github.com/alvaro-cuesta/react-best-merge-refs/blob/main/src/index.test.tsx)
-and [integration](https://github.com/alvaro-cuesta/react-best-merge-refs/blob/main/test/examples.test.tsx)
-tests.
+So I did what any self-respecting engineer would do: **add another library to the mix**. I published [`react-best-merge-refs`] to handle all these edge cases, with thorough [unit](https://github.com/alvaro-cuesta/react-best-merge-refs/blob/main/src/index.test.tsx) and [integration](https://github.com/alvaro-cuesta/react-best-merge-refs/blob/main/test/examples.test.tsx) tests.
 
-As part of this work, I designed the utility with a **very strict API** to make it difficult to use incorrectly. In
-particular:
+As part of this work, I designed the utility with a **very strict API** to make it difficult to use incorrectly. In particular:
 
-1. I only expose `useMergeRefs` and **not** a raw `mergeRefs` that would return an always-unstable merged ref. This
-   makes it essentially impossible to break other people's code.
+1. I only expose `useMergeRefs` and **not** a raw `mergeRefs` that would return an always-unstable merged ref. This makes it essentially impossible to break other people's code.
 
 2. I changed the API to take a keyed object.
 
@@ -309,24 +281,15 @@ particular:
    useMergeRefs(externalRef, myRef);
    ```
 
-   In this design, each ref has a unique key associated with it, which allows it to be tracked over time. This makes it
-   _very_ hard to use incorrectly and trigger a situation where an external ref might be made unstable under obscure
-   circumstances.
+   In this design, each ref has a unique key associated with it, which allows it to be tracked over time. This makes it _very_ hard to use incorrectly and trigger a situation where an external ref might be made unstable under obscure circumstances.
 
-   The problem it solves (and the solution I came up with) is similar to [React's `key`
-   prop](https://react.dev/learn/rendering-lists#keeping-list-items-in-order-with-key).
+   The problem it solves (and the solution I came up with) is similar to [React's `key` prop](https://react.dev/learn/rendering-lists#keeping-list-items-in-order-with-key).
 
-   See [my rationale](https://github.com/alvaro-cuesta/react-best-merge-refs/blob/99300615b1c6fc47d8a524b20424447b00c6047c/README.md#why-an-object-for-refs-instead-of-a-simple-array),
-   where I explain why the usual APIs offered by other libraries (either an array argument or a variadic function taking refs) feel a bit footgun-y to me.
+   See [my rationale](https://github.com/alvaro-cuesta/react-best-merge-refs/blob/99300615b1c6fc47d8a524b20424447b00c6047c/README.md#why-an-object-for-refs-instead-of-a-simple-array), where I explain why the usual APIs offered by other libraries (either an array argument or a variadic function taking refs) feel a bit footgun-y to me.
 
-I'm not 100% convinced that `(2)` is the perfect choice, but since the difference in usage is minimal (`{}` instead of
-`[]`), I went for it in hopes of learning more through experience. It may only impact efficiency in hot paths, but I
-strongly believe micro-optimizations should come after correctness. You can always expose an `unsafe_mergeRefs` if
-efficiency is critical.
+I'm not 100% convinced that `(2)` is the perfect choice, but since the difference in usage is minimal (`{}` instead of `[]`), I went for it in hopes of learning more through experience. It may only impact efficiency in hot paths, but I strongly believe micro-optimizations should come after correctness. You can always expose an `unsafe_mergeRefs` if efficiency is critical.
 
-I still believe **[facebook/react#29757] should be built into the framework**: the implementation is very easy to get
-wrong and can break with React updates (as happened with [React 19's introduction of cleanup functions for
-refs](https://react.dev/blog/2024/12/05/react-19#cleanup-functions-for-refs)).
+I still believe **[facebook/react#29757] should be built into the framework**: the implementation is very easy to get wrong and can break with React updates (as happened with [React 19's introduction of cleanup functions for refs](https://react.dev/blog/2024/12/05/react-19#cleanup-functions-for-refs)).
 
 **If you want a safer way to merge refs today, check out [`react-best-merge-refs`].**
 
