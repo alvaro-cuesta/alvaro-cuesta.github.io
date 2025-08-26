@@ -272,3 +272,10 @@ figure:has(> pre) {
 :where(pre):not(figure > pre) {
   box-shadow: var(--pico-card-box-shadow);
 }
+
+@media (max-width: 575.99999px) {
+  article {
+    margin: 0 calc(var(--pico-block-spacing-horizontal) * -1)
+      var(--pico-block-spacing-vertical);
+  }
+}
