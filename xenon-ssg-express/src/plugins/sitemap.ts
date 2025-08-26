@@ -1,12 +1,17 @@
 import path from "node:path";
 import fs from "node:fs/promises";
 import { create } from "xmlbuilder2";
-import type { Plugin, PluginBuildPostFunction } from "./plugins";
+import type {
+  Plugin,
+  PluginBuildPostFunction,
+  PluginGetInjectableFunction,
+} from "./plugins";
 import type { Temporal } from "temporal-polyfill";
 
 type SitemapPluginOptions = {
   outputFilename: string;
   mountPointFragments?: string[];
+  disableInjectMetaTag?: boolean;
 };
 
 export type SitemapPluginMetadata = {
@@ -32,18 +37,19 @@ export const sitemapPlugin =
   ({
     outputFilename,
     mountPointFragments = [],
+    disableInjectMetaTag,
   }: SitemapPluginOptions): Plugin<void, SitemapPluginMetadata> =>
   () => {
-    const buildPost: PluginBuildPostFunction<SitemapPluginMetadata> = async ({
-      siteMeta,
-      baseOutputFolder,
-      generatedPages,
-    }) => {
+    const pathname = `/${[...mountPointFragments, outputFilename].join("/")}`;
+
+    const buildPost: PluginBuildPostFunction<
+      void,
+      SitemapPluginMetadata
+    > = async ({ siteMeta, baseOutputFolder, generatedPages }) => {
       const outputFolder = path.join(baseOutputFolder, ...mountPointFragments);
       await fs.mkdir(outputFolder, { recursive: true });
 
       const outputFilepath = path.join(outputFolder, outputFilename);
-
       console.debug(`[Sitemap] ${outputFilepath}`);
 
       const root = create({ version: "1.0", encoding: "UTF-8" });
@@ -79,9 +85,7 @@ export const sitemapPlugin =
         if (generatedPage.metadata[sitemapPluginKey]?.priority !== undefined) {
           url
             .ele("priority")
-            .txt(
-              `${siteMeta.baseUrl}${generatedPage.metadata[sitemapPluginKey].priority}`,
-            );
+            .txt(generatedPage.metadata[sitemapPluginKey].priority.toString());
         }
       }
 
@@ -90,8 +94,24 @@ export const sitemapPlugin =
       await fs.writeFile(outputFilepath, xml);
     };
 
+    const getInjectable: PluginGetInjectableFunction<void> | undefined =
+      !disableInjectMetaTag
+        ? (options) =>
+            options.isBuild
+              ? [
+                  {
+                    tagType: "link",
+                    rel: "sitemap",
+                    type: "application/xml",
+                    title: "Sitemap",
+                    href: `${options.siteMeta.baseUrl}${pathname}`,
+                  },
+                ]
+              : undefined
+        : undefined;
+
     return {
       buildPost,
-      getInjectable: undefined,
+      getInjectable,
     };
   };

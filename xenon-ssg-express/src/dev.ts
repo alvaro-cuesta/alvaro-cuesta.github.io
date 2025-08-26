@@ -29,7 +29,12 @@ export function makeXenonDevExpressApp<PageMetadata extends UnknownRecord>(
   }
 
   const injectableRaw = plugins.flatMap((runnablePlugin) => {
-    return runnablePlugin.getInjectable?.(undefined) ?? [];
+    return (
+      runnablePlugin.getInjectable?.({
+        isBuild: false,
+        siteMeta,
+      }) ?? []
+    );
   });
 
   const { injectable, injectableCritical } =

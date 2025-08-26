@@ -17,6 +17,7 @@ import {
   sitemapPluginKey,
   type SitemapPluginMetadata,
 } from "xenon-ssg-express/src/plugins/sitemap";
+import { routeHome } from "./routes";
 
 export type SiteRenderMeta = XenonExpressRenderMeta & {
   defaultOgImage: string;
@@ -44,10 +45,12 @@ const render: XenonExpressRenderFunction<SitemapPluginMetadata> = (
     defaultOgImage: `${renderMeta.baseUrl}${defaultOgImageHref}`,
   };
 
+  const isHome = routeHome.match(siteRenderMeta.pathname);
+
   return {
     reactNode: <Root siteRenderMeta={siteRenderMeta} />,
     metadata: {
-      [sitemapPluginKey]: { priority: 0.5 },
+      [sitemapPluginKey]: isHome ? { priority: 1.0 } : undefined,
     },
   };
 };

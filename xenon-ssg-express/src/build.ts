@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { generateStaticSite } from "xenon-ssg/src/generate/generate";
 import { type XenonExpressSite, getSiteMeta } from ".";
-import { getTagsFromInjectableRaw } from "./plugins/plugins";
+import { getTagsFromInjectableRaw, type Plugin } from "./plugins/plugins";
 import type { UnknownRecord } from "type-fest";
 
 type BuildXenonSiteOptions = {
@@ -14,7 +14,7 @@ type BuildXenonSiteOptions = {
  * Builds a Xenon site.
  */
 export async function buildXenonExpressSite<PageMetadata extends UnknownRecord>(
-  site: XenonExpressSite<PageMetadata>,
+  site: XenonExpressSite<PageMetadata, Plugin<unknown, PageMetadata>[]>,
   {
     outputDir = path.join(process.cwd(), "dist"),
     entryPaths = ["/"],
@@ -32,13 +32,25 @@ export async function buildXenonExpressSite<PageMetadata extends UnknownRecord>(
 
   console.debug("Running plugins (pre):");
 
+  const buildPreResults: unknown[] = [];
+
   const injectableRaws = await Promise.all(
-    plugins.map(async (runnablePlugin) => {
+    plugins.map(async (runnablePlugin, pluginIndex) => {
       const buildPreResult = await runnablePlugin.buildPre?.({
         siteMeta,
         baseOutputFolder: outputDir,
       });
-      return runnablePlugin.getInjectable?.(buildPreResult) ?? [];
+
+      buildPreResults[pluginIndex] = buildPreResult;
+
+      return (
+        runnablePlugin.getInjectable?.({
+          isBuild: true,
+          siteMeta,
+          baseOutputFolder: outputDir,
+          buildPreResult,
+        }) ?? []
+      );
     }),
   );
 
@@ -66,8 +78,9 @@ export async function buildXenonExpressSite<PageMetadata extends UnknownRecord>(
 
   console.debug("\nRunning plugins (post):");
 
-  for (const plugin of plugins) {
+  for (const [pluginIndex, plugin] of plugins.entries()) {
     await plugin.buildPost?.({
+      buildPreResult: buildPreResults[pluginIndex],
       siteMeta,
       baseOutputFolder: outputDir,
       generatedPages,

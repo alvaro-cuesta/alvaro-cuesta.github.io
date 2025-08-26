@@ -84,10 +84,12 @@ export const staticFilePlugin =
       | PluginGetInjectableFunction<StaticFilePluginBuildPreResult>
       | undefined =
       injectAs === "stylesheet"
-        ? (buildPreResult) => [
+        ? (options) => [
             {
               tagType: "stylesheet" as const,
-              href: buildPreResult?.cacheBustedPathname ?? pathname,
+              href: options.isBuild
+                ? options.buildPreResult.cacheBustedPathname
+                : pathname,
               critical,
             },
           ]

@@ -18,10 +18,7 @@
   - Infer last modified et al from Git?
   - Can we infer OG embed image from first image in MDX?
 - Better dropdown in main page nav
-- Sitemap XML
-  - https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap#xml
-  - Sitemap as tag
-  - Sitmap in robots
+- Robots.txt plugin (inject sitemap too)
 - RSS?
 - Add global "last published/updated/whatever" meta tag on build
 - `ld+json` (e.g. a `BlogPosting`)

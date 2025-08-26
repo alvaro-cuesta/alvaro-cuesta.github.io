@@ -15,14 +15,21 @@ export type PluginBuildPreFunction<BuildPreResult = unknown> = (
   options: PluginBuildPreOptions,
 ) => Promise<BuildPreResult>;
 
-export type PluginBuildPostOptions<PageMetadata extends UnknownRecord> = {
+export type PluginBuildPostOptions<
+  BuildPreResult,
+  PageMetadata extends UnknownRecord,
+> = {
   siteMeta: XenonExpressSiteMeta;
   baseOutputFolder: string;
+  buildPreResult: BuildPreResult;
   generatedPages: XenonGeneratedPage<PageMetadata>[];
 };
 
-export type PluginBuildPostFunction<PageMetadata extends UnknownRecord> = (
-  options: PluginBuildPostOptions<PageMetadata>,
+export type PluginBuildPostFunction<
+  BuildPreResult,
+  PageMetadata extends UnknownRecord,
+> = (
+  options: PluginBuildPostOptions<BuildPreResult, PageMetadata>,
 ) => Promise<void>;
 
 export type PluginInjectableStylesheet = {
@@ -52,13 +59,28 @@ export type PluginInjectableTag = {
   critical?: boolean | undefined;
 } & (PluginInjectableStylesheet | PluginInjectableLink | PluginInjectableMeta);
 
+export type PluginGetInjectableFunctionOptions<BuildPreResult> = {
+  siteMeta: XenonExpressSiteMeta;
+} & (
+  | {
+      isBuild: true;
+      baseOutputFolder: string;
+      /**
+       * Value returned from {@link RunnablePlugin.buildPre}.
+       *
+       * Will be `undefined` if the plugin is running in dev mode.
+       */
+      buildPreResult: BuildPreResult;
+    }
+  | {
+      isBuild: false;
+      baseOutputFolder?: never;
+      buildPreResult?: never;
+    }
+);
+
 export type PluginGetInjectableFunction<BuildPreResult> = (
-  /**
-   * Value returned from {@link RunnablePlugin.buildPre}.
-   *
-   * Will be `undefined` if the plugin is running in dev mode.
-   */
-  buildPreResult: BuildPreResult | undefined,
+  options: PluginGetInjectableFunctionOptions<BuildPreResult>,
 ) => PluginInjectableTag[] | undefined;
 
 export type RunnablePlugin<
@@ -76,16 +98,16 @@ export type RunnablePlugin<
   buildPre?: PluginBuildPreFunction<BuildPreResult> | undefined;
 
   /**
-   * Builds the plugin during `build` mode. Runs after the static site is generated.
-   */
-  buildPost?: PluginBuildPostFunction<PageMetadata> | undefined;
-
-  /**
    * Injectable tags that can be used by the plugin.
    *
    * For example, a CSS file can be injected into the HTML head.
    */
   getInjectable?: PluginGetInjectableFunction<BuildPreResult> | undefined;
+
+  /**
+   * Builds the plugin during `build` mode. Runs after the static site is generated.
+   */
+  buildPost?: PluginBuildPostFunction<BuildPreResult, PageMetadata> | undefined;
 };
 
 /**

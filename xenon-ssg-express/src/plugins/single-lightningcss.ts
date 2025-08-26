@@ -100,10 +100,12 @@ export const singleLightningCssPlugin =
 
     const getInjectable:
       | PluginGetInjectableFunction<SingleLightningCssPluginBuildPreResult>
-      | undefined = (buildPreResult) => [
+      | undefined = (options) => [
       {
         tagType: "stylesheet" as const,
-        href: buildPreResult?.cacheBustedPathname ?? pathname,
+        href: options.isBuild
+          ? options.buildPreResult.cacheBustedPathname
+          : pathname,
         critical,
       },
     ];

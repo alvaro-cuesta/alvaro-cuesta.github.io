@@ -154,11 +154,11 @@ export const faviconPlugin = async ({
 
   const getInjectable: PluginGetInjectableFunction<
     FaviconPluginBuildPreResult
-  > = (buildPreResult) =>
+  > = (options) =>
     html.map((htmlTag) => {
       let cacheBustedHtmlTag = htmlTag;
-      if (buildPreResult) {
-        const { cacheBustingMap } = buildPreResult;
+      if (options.isBuild) {
+        const cacheBustingMap = options.buildPreResult.cacheBustingMap;
 
         for (const [name, cacheBustedName] of Object.entries(cacheBustingMap)) {
           cacheBustedHtmlTag = cacheBustedHtmlTag.replaceAll(

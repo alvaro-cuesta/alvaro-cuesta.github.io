@@ -24,6 +24,7 @@ export type XenonExpressRenderFunction<PageMetadata extends UnknownRecord> = (
 
 export type XenonExpressSite<
   PageMetadata extends UnknownRecord,
+  // TODO: this any break typechecking unless careful (virality) but unknown makes things impossible
   Plugins extends Plugin<unknown, PageMetadata>[] = Plugin<any, PageMetadata>[],
 > = {
   render: XenonExpressRenderFunction<PageMetadata>;
