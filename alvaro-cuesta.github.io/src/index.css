@@ -279,3 +279,12 @@ figure:has(> pre) {
       var(--pico-block-spacing-vertical);
   }
 }
+
+body {
+  display: flex;
+  flex-direction: column;
+
+  > main {
+    flex-grow: 1;
+  }
+}
