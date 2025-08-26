@@ -288,3 +288,7 @@ body {
     flex-grow: 1;
   }
 }
+
+pre > code {
+  overflow: scroll;
+}
