@@ -90,7 +90,7 @@ export type RunnablePlugin<
   /**
    * Attaches the plugin to Express during `dev` mode.
    */
-  attachToExpress?: PluginAttachToExpressFunction;
+  attachToExpress?: PluginAttachToExpressFunction | undefined;
 
   /**
    * Builds the plugin during `build` mode. Runs before the static site is generated.

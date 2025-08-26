@@ -3,6 +3,7 @@ import type {
   XenonExpressRenderMeta,
   XenonExpressSite,
 } from "xenon-ssg-express/src";
+import fs from "node:fs/promises";
 import { RENDER_TO_STREAM_OPTIONS } from "../config";
 import { staticFilePlugin } from "xenon-ssg-express/src/plugins/static-file";
 import { staticFolderPlugin } from "xenon-ssg-express/src/plugins/static-folder";
@@ -110,10 +111,12 @@ export const fontawesomeWebfontsFolder = staticFolderPlugin({
   mountPointFragments: ["css", "fontawesome", "webfonts"],
 });
 
+/*
 const STATIC_FOLDER = path.join(__dirname, "..", "static");
 export const staticFolder = staticFolderPlugin({
   inputFolder: STATIC_FOLDER,
 });
+*/
 
 const INDEX_CSS_PATH = path.join(__dirname, "index.css");
 export const indexCss = singleLightningCssPlugin({
@@ -134,13 +137,17 @@ export const starryNightCss = singleLightningCssPlugin({
   critical: true,
 });
 
-const sitemap = sitemapPlugin({
-  outputFilename: "sitemap.xml",
-});
-
 export async function makeSite(): Promise<
   XenonExpressSite<SitemapPluginMetadata>
 > {
+  const sitemap = sitemapPlugin({
+    robotsTxtContent: await fs.readFile(
+      path.join(__dirname, "robots.txt"),
+      "utf-8",
+    ),
+    outputFilename: "sitemap.xml",
+  });
+
   const favicon = await faviconPlugin({
     inputFilepath: path.join(__dirname, "favicon.svg"),
     faviconOptions: {
@@ -148,7 +155,7 @@ export async function makeSite(): Promise<
       appShortName: "Álvaro Cuesta",
       appDescription: "Álvaro Cuesta's personal website",
       developerName: "Álvaro Cuesta",
-      developerURL: "https://github.com/alvaro-cuesta",
+      developerURL: "https://alvaro.cuesta.dev",
       background: "#13171f", // --pico-background-color
       theme_color: "#8999f9", // --pico-color
       display: "browser",
@@ -161,7 +168,7 @@ export async function makeSite(): Promise<
     renderToStreamOptions: RENDER_TO_STREAM_OPTIONS,
     plugins: [
       favicon,
-      staticFolder,
+      // staticFolder,
       picoCss,
       fontAwesomeCss,
       fontawesomeWebfontsFolder,

@@ -3,12 +3,14 @@ import fs from "node:fs/promises";
 import { create } from "xmlbuilder2";
 import type {
   Plugin,
+  PluginAttachToExpressFunction,
   PluginBuildPostFunction,
   PluginGetInjectableFunction,
 } from "./plugins";
 import type { Temporal } from "temporal-polyfill";
 
 type SitemapPluginOptions = {
+  robotsTxtContent?: string;
   outputFilename: string;
   mountPointFragments?: string[];
   disableInjectMetaTag?: boolean;
@@ -35,12 +37,22 @@ export const sitemapPluginKey = Symbol("SitemapPlugin");
 
 export const sitemapPlugin =
   ({
+    robotsTxtContent,
     outputFilename,
     mountPointFragments = [],
     disableInjectMetaTag,
   }: SitemapPluginOptions): Plugin<void, SitemapPluginMetadata> =>
   () => {
     const pathname = `/${[...mountPointFragments, outputFilename].join("/")}`;
+
+    const attachToExpress: PluginAttachToExpressFunction | undefined =
+      robotsTxtContent
+        ? (app) => {
+            app.get("/robots.txt", async (_req, res) => {
+              res.status(200).contentType("text/plain").end(robotsTxtContent);
+            });
+          }
+        : undefined;
 
     const buildPost: PluginBuildPostFunction<
       void,
@@ -92,6 +104,15 @@ export const sitemapPlugin =
       const xml = root.end();
 
       await fs.writeFile(outputFilepath, xml);
+
+      if (robotsTxtContent) {
+        const realRobotsTxtContent = `${robotsTxtContent}
+${robotsTxtContent.endsWith("\n") ? "" : "\n"}Sitemap: ${siteMeta.baseUrl}${pathname}\n`;
+
+        const robotsTxtOutputFilepath = path.join(outputFolder, "robots.txt");
+        console.debug(`[Sitemap] ${robotsTxtOutputFilepath}`);
+        await fs.writeFile(robotsTxtOutputFilepath, realRobotsTxtContent);
+      }
     };
 
     const getInjectable: PluginGetInjectableFunction<void> | undefined =
@@ -111,6 +132,7 @@ export const sitemapPlugin =
         : undefined;
 
     return {
+      attachToExpress,
       buildPost,
       getInjectable,
     };
