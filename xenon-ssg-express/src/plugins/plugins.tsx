@@ -1,21 +1,23 @@
 import type { Express } from "express";
 import type { XenonExpressSiteMeta } from "..";
 import type { ReactNode } from "react";
+import type { XenonGeneratedPage } from "xenon-ssg/src/generate/generate";
 
 export type PluginAttachToExpressFunction = (app: Express) => void;
 
 export type PluginBuildPreOptions = {
+  siteMeta: XenonExpressSiteMeta;
   baseOutputFolder: string;
 };
 
 export type PluginBuildPreFunction<R = unknown> = (
-  baseOutputFolder: PluginBuildPreOptions,
+  options: PluginBuildPreOptions,
 ) => Promise<R>;
 
-export type PluginGeneratedPage = {};
-
 export type PluginBuildPostOptions = {
+  siteMeta: XenonExpressSiteMeta;
   baseOutputFolder: string;
+  generatedPages: XenonGeneratedPage[];
 };
 
 export type PluginBuildPostFunction = (

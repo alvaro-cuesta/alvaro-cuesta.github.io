@@ -2,6 +2,7 @@ import type { RenderToStreamOptions } from "xenon-ssg/src/render";
 import type { PluginInjectableTag, Plugin } from "./plugins/plugins";
 import type { ReactNode } from "react";
 import { DEFAULT_DEV_PORT } from "./dev";
+import type { XenonRenderFunction } from "xenon-ssg/src";
 
 export type XenonExpressSiteMeta = {
   origin: string;
@@ -18,7 +19,7 @@ export type XenonExpressRenderMeta = XenonExpressSiteMeta & {
 
 export type XenonExpressRenderFunction = (
   meta: XenonExpressRenderMeta,
-) => ReactNode;
+) => ReturnType<XenonRenderFunction>;
 
 export type XenonExpressSite = {
   render: XenonExpressRenderFunction;

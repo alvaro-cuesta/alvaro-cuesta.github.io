@@ -5,6 +5,7 @@ import { mapIter } from "../iter";
 import { canonicalizeHref } from "../url";
 import { Root } from "../Root";
 import type { XenonRenderFunction } from "..";
+import type { UnknownRecord } from "type-fest";
 
 const FAKE_BASE_URL =
   "https://www.fakeorigin.if-this-collides-with-a-real-url-im-gonna-be-surprised.example.com";
@@ -38,6 +39,11 @@ type GenerateStaticSiteOptions = {
   renderToStreamOptions?: RenderToStreamOptions;
 };
 
+export type XenonGeneratedPage = {
+  pathname: string;
+  metadata?: UnknownRecord | undefined;
+};
+
 export const generateStaticSite = async (
   /**
    * Function that returns a React node.
@@ -50,7 +56,9 @@ export const generateStaticSite = async (
     outputDir = path.join(process.cwd(), "dist"),
     renderToStreamOptions,
   }: GenerateStaticSiteOptions = {},
-) => {
+): Promise<XenonGeneratedPage[]> => {
+  const generatedPages: XenonGeneratedPage[] = [];
+
   const pendingRenderPathnames = new Set(
     mapIter(
       entryPaths,
@@ -109,10 +117,19 @@ export const generateStaticSite = async (
       pendingRenderPathnames.add(linkPathname);
     };
 
+    const { reactNode, metadata } = renderFn(pathname);
+
     await renderToFileAtomic(
       fullFilePath,
-      <Root addLink={addLink}>{renderFn(pathname)}</Root>,
+      <Root addLink={addLink}>{reactNode}</Root>,
       renderToStreamOptions,
     );
+
+    generatedPages.push({
+      pathname,
+      metadata,
+    });
   }
+
+  return generatedPages;
 };

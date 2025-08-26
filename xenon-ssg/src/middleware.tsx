@@ -17,7 +17,7 @@ export const makeXenonMiddleware =
         // We don't have to crawl links in middleware mode since we're not pre-rendering anything
         addLink={doNothing}
       >
-        {render(pathname)}
+        {render(pathname).reactNode}
       </Root>,
       options,
     );

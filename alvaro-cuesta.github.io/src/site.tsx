@@ -11,6 +11,7 @@ import { faviconPlugin } from "xenon-ssg-express/src/plugins/favicon";
 import { version } from "../package.json" with { type: "json" };
 import type { PluginInjectableLink } from "xenon-ssg-express/src/plugins/plugins";
 import { Root } from "./components/Root";
+import { sitemapPlugin } from "xenon-ssg-express/src/plugins/sitemap";
 
 export type SiteRenderMeta = XenonExpressRenderMeta & {
   defaultOgImage: string;
@@ -35,7 +36,9 @@ const render = (renderMeta: XenonExpressRenderMeta) => {
     defaultOgImage: `${renderMeta.baseUrl}${defaultOgImageHref}`,
   };
 
-  return <Root siteRenderMeta={siteRenderMeta} />;
+  return {
+    reactNode: <Root siteRenderMeta={siteRenderMeta} />,
+  };
 };
 
 const PICO_FILE = "pico.blue.min.css";
@@ -94,6 +97,10 @@ export const starryNightCss = singleLightningCssPlugin({
   critical: true,
 });
 
+const sitemap = sitemapPlugin({
+  outputFilename: "sitemap.xml",
+});
+
 export const makeSite = async (): Promise<XenonExpressSite> => {
   const favicon = await faviconPlugin({
     inputFilepath: path.join(__dirname, "favicon.svg"),
@@ -121,6 +128,7 @@ export const makeSite = async (): Promise<XenonExpressSite> => {
       fontawesomeWebfontsFolder,
       indexCss,
       starryNightCss,
+      sitemap,
     ],
   };
 };

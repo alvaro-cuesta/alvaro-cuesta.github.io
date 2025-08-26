@@ -34,6 +34,7 @@ export const buildXenonExpressSite = async (
   const injectableRaws = await Promise.all(
     plugins.map(async (runnablePlugin) => {
       const buildPreResult = await runnablePlugin.buildPre?.({
+        siteMeta,
         baseOutputFolder: outputDir,
       });
       return runnablePlugin.getInjectable?.(buildPreResult) ?? [];
@@ -56,7 +57,7 @@ export const buildXenonExpressSite = async (
       injectableCritical,
     });
 
-  await generateStaticSite(render, {
+  const generatedPages = await generateStaticSite(render, {
     entryPaths: entryPaths,
     outputDir: outputDir,
     renderToStreamOptions: site.renderToStreamOptions,
@@ -65,7 +66,11 @@ export const buildXenonExpressSite = async (
   console.debug("\nRunning plugins (post):");
 
   for (const plugin of plugins) {
-    await plugin.buildPost?.({ baseOutputFolder: outputDir });
+    await plugin.buildPost?.({
+      siteMeta,
+      baseOutputFolder: outputDir,
+      generatedPages,
+    });
   }
 
   console.log("\nAll done!");
