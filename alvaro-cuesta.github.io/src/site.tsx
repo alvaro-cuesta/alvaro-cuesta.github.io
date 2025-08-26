@@ -17,7 +17,15 @@ import {
   sitemapPluginKey,
   type SitemapPluginMetadata,
 } from "xenon-ssg-express/src/plugins/sitemap";
-import { routeHome } from "./routes";
+import {
+  routeBlogArticle,
+  routeBlogArticleList,
+  routeBlogTag,
+  routeBlogTagList,
+  routeBlogYear,
+  routeBlogYearList,
+  routeHome,
+} from "./routes";
 
 export type SiteRenderMeta = XenonExpressRenderMeta & {
   defaultOgImage: string;
@@ -46,11 +54,26 @@ const render: XenonExpressRenderFunction<SitemapPluginMetadata> = (
   };
 
   const isHome = routeHome.match(siteRenderMeta.pathname);
+  const isBlogArticle = routeBlogArticle.match(siteRenderMeta.pathname);
+  const isBlogArticleList = routeBlogArticleList.match(siteRenderMeta.pathname);
+  const isBlogGenericRoute =
+    routeBlogTagList.match(siteRenderMeta.pathname) ||
+    routeBlogTag.match(siteRenderMeta.pathname) ||
+    routeBlogYearList.match(siteRenderMeta.pathname) ||
+    routeBlogYear.match(siteRenderMeta.pathname);
 
   return {
     reactNode: <Root siteRenderMeta={siteRenderMeta} />,
     metadata: {
-      [sitemapPluginKey]: isHome ? { priority: 1.0 } : undefined,
+      [sitemapPluginKey]: isHome
+        ? { priority: 1.0 }
+        : isBlogArticle
+          ? { priority: 0.9 }
+          : isBlogArticleList
+            ? { priority: 0.8 }
+            : isBlogGenericRoute
+              ? { priority: 0.6 }
+              : undefined,
     },
   };
 };
