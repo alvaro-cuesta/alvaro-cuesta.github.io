@@ -1,6 +1,6 @@
 import { transform } from "lightningcss";
-import * as fs from "node:fs/promises";
-import * as path from "node:path";
+import fs from "node:fs/promises";
+import path from "node:path";
 import type {
   Plugin,
   PluginAttachToExpressFunction,

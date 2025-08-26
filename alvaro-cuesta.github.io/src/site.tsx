@@ -7,7 +7,7 @@ import { RENDER_TO_STREAM_OPTIONS } from "../config";
 import { staticFilePlugin } from "xenon-ssg-express/src/plugins/static-file";
 import { staticFolderPlugin } from "xenon-ssg-express/src/plugins/static-folder";
 import { singleLightningCssPlugin } from "xenon-ssg-express/src/plugins/single-lightningcss";
-import * as path from "node:path";
+import path from "node:path";
 import { faviconPlugin } from "xenon-ssg-express/src/plugins/favicon";
 import { version } from "../package.json" with { type: "json" };
 import type { PluginInjectableLink } from "xenon-ssg-express/src/plugins/plugins";

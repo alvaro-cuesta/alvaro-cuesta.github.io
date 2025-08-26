@@ -1,5 +1,5 @@
 import type { RenderToStreamOptions } from "xenon-ssg/src/render";
-import * as path from "node:path";
+import path from "node:path";
 
 export const OUTPUT_FOLDER = path.join(__dirname, "dist");
 
