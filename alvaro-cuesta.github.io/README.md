@@ -6,7 +6,6 @@
 
 - Maybe use FontAwesome React packages? Or my own icon but ensure it behaves the same (I think their
   components renders SVG instead of fonts)
-- Try to use filter for highlight, or at least shomehow highlight `#projects`
 - Blog posts
   - Comments from GH issues?
   - Add manual description OR autodescription https://github.com/rehypejs/rehype-infer-description-meta
@@ -17,8 +16,6 @@
   - Extract to mdx and blog packages
   - Infer last modified et al from Git?
   - Can we infer OG embed image from first image in MDX?
-- Better dropdown in main page nav
-- Robots.txt plugin (inject sitemap too)
 - RSS?
 - Add global "last published/updated/whatever" meta tag on build
 - `ld+json` (e.g. a `BlogPosting`)
@@ -35,6 +32,5 @@
   ```
 - Latest blog posts in frontpage
 - Last updated (maybe even guess from Git? override via blog post export anyways)
-- High priority inserts?
 - Preload fonts?
 - Font swap?
