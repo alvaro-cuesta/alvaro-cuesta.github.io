@@ -21,10 +21,10 @@ This means that the following code:
 
 ```tsx
 function MyDiv({ children }: { children?: ReactNode }) {
-  const ref = (node) => {
-    console.log("Inserted");
+  const ref = (div: HTMLDivElement) => {
+    console.log("Inserted", div);
     return () => {
-      console.log("Removed");
+      console.log("Removed", div);
     };
   };
 
@@ -46,7 +46,9 @@ function App() {
 }
 ```
 
-...will print:
+[_(CodeSandbox)_](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-1-qq5qyk)
+
+...will log:
 
 1. `Inserted` on initial mount, when the `<div>` HTML element is inserted into the DOM.
 2. `Removed` and then `Inserted` on every `<button>` click (or any other re-render). **This happens regardless of actual
@@ -61,10 +63,10 @@ We can fix this issue by making the function reference stable across renders, fo
 ```tsx
 function MyDiv({ children }: { children?: ReactNode }) {
   // Now `ref` will be stable across renders since`useCallback` memoizes it
-  const ref = useCallback((node) => {
-    console.log("Inserted", node);
+  const ref = useCallback((div: HTMLDivElement) => {
+    console.log("Inserted", div);
     return () => {
-      console.log("Removed", node);
+      console.log("Removed", div);
     };
   }, []);
 
@@ -86,7 +88,9 @@ function App() {
 }
 ```
 
-...which will **only** print:
+[_(CodeSandbox)_](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-2-rlkk29)
+
+...which will **only** log:
 
 1. `Inserted` on initial mount.
 2. `Removed` on unmount.
@@ -134,7 +138,7 @@ function MyInput({ externalRef }: { externalRef?: Ref<HTMLInputElement> }) {
   /* ... do stuff with `inputRef` ... */
 
   // Here we pass the combined refs to the underlying input
-  return <input ref={mergeRefs(externalRef, inputRef)} />;
+  return <input ref={mergeRefs([externalRef, inputRef])} />;
 }
 ```
 
@@ -145,32 +149,36 @@ inserted into the DOM:
 
 ```tsx
 function MyInput() {
-  const focusInput = useCallback((node) => {
-    node?.current.focus();
+  const focusInput = useCallback((input: HTMLInputElement | null) => {
+    input?.focus();
   }, []);
 
   return <input ref={focusInput} type="text" />;
 }
 ```
 
-As we saw earlier, [`ref` callback guarantees](#react-ref-callback-guarantees) ensure this works flawlessly because the
-callback is **only** called once (when the `<input>` is initially inserted into the DOM). But what happens when we want
-to support an external `ref` from props?
+[_(CodeSandbox)_](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-3-4kk4n7)
+
+As we saw earlier, [React's `ref` callback guarantees](#react-ref-callback-guarantees) ensure this works flawlessly
+because the callback is **only** called once (when the `<input>` is initially inserted into the DOM). But what happens
+when we want to support an external `ref` from props?
 
 ```tsx
 import { mergeRefs } from "some-ref-merging-library";
 
 function MyInput({ externalRef }: { externalRef?: Ref<HTMLInputElement> }) {
-  const focusInput = useCallback((node) => {
-    node?.current.focus();
+  const focusInput = useCallback((input: HTMLInputElement | null) => {
+    input?.focus();
   }, []);
 
-  return <input ref={mergeRefs(externalRef, focusInput)} type="text" />;
+  return <input ref={mergeRefs([externalRef, focusInput])} type="text" />;
 }
 ```
 
-Since `mergeRefs` creates a new function on **every render**, its reference is by definition unstable, causing the [same
-issue we saw earlier](#logging-buggy). Can we fix it the same way as before?
+[_(CodeSandbox)_](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-4-w2yfkq)
+
+Since `mergeRefs` creates a new function on **every render**, its reference is by definition unstable, causing the same
+issue we saw earlier. Can we fix it the same way as before?
 
 Well, **it depends**.
 
@@ -181,14 +189,14 @@ across renders:
 
 ```tsx
 function MyInput({ externalRef }: { externalRef?: Ref<HTMLInputElement> }) {
-  const focusInput = useCallback((node) => {
-    node?.current.focus();
+  const focusInput = useCallback((input: HTMLInputElement) => {
+    input?.focus();
   }, []);
 
   const ref = useMemo(
-    () => mergeRefs(externalRef, focusInput),
+    () => mergeRefs([externalRef, focusInput]),
     // (1)
-    [ref, focusInput],
+    [externalRef, focusInput],
   );
 
   return <input ref={ref} type="text" />;
@@ -209,9 +217,10 @@ function App() {
 
   return (
     <div>
+      <input type="text" />
       <MyInput
         // This ref is unstable!
-        ref={(input) => {
+        externalRef={(input) => {
           console.log(input);
         }}
       />
@@ -221,6 +230,8 @@ function App() {
   );
 }
 ```
+
+[_(CodeSandbox)_](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-5-kjv6gc)
 
 ...React will see a new function on every render, and **your input will be focused every time the user clicks the
 _"Increase"_ button**.
@@ -242,8 +253,8 @@ function App() {
   };
 
   // We are good citizens and memoize our ref callbacks
-  const inputRef = useCallback((input) => {
-    console.log(input);
+  const inputRef = useCallback((input: HTMLInputElement | null) => {
+    console.log("This should only log once, on mount", input);
   }, []);
 
   return (
@@ -257,6 +268,8 @@ function App() {
 ```
 
 Again, **can you spot the issue?**
+
+[_(CodeSandbox)_](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-6-fm3ndz)
 
 Even if you memoize your callback refs, `SomeoneElsesInput` might merge them with unstable callbacks (possibly even from
 third-party libraries) and create unstable callbacks. This pattern is common across React's ecosystem. The worst part is
@@ -339,56 +352,56 @@ _(The plot thickens.)_
 
 I'll leave these as an exercise for the reader but, _trust me_, they are subtly buggy. **Can you spot why?**
 
-- Exhibit A:
+**Exhibit A**
 
-  ```tsx
-  function App() {
-    const [count, setCount] = useState(0);
-    const increaseCount = () => {
-      setCount((count) => count + 1);
-    };
+```tsx
+function App() {
+  const [count, setCount] = useState(0);
+  const increaseCount = () => {
+    setCount((count) => count + 1);
+  };
 
-    // We are good citizens and memoize our ref callbacks
-    const inputRef = useCallback(
-      (input) => {
-        console.log(input, count);
-      },
-      [count],
-    );
+  // We are good citizens and memoize our ref callbacks
+  const inputRef = useCallback(
+    (input: HTMLInputElement | null) => {
+      console.log(input, count);
+    },
+    [count],
+  );
 
-    return (
-      <div>
-        <MyInput ref={inputRef} autoFocus />
-        Clicked {count} times.
-        <button onClick={increaseCount}>Increase</button>
-      </div>
-    );
-  }
-  ```
+  return (
+    <div>
+      <MyInput ref={inputRef} autoFocus />
+      Clicked {count} times.
+      <button onClick={increaseCount}>Increase</button>
+    </div>
+  );
+}
+```
 
-- Exhibit B:
+**Exhibit B**
 
-  ```tsx
-  function App() {
-    const [count, setCount] = useState(0);
-    const increaseCount = () => {
-      setCount((count) => count + 1);
-    };
+```tsx
+function App() {
+  const [count, setCount] = useState(0);
+  const increaseCount = () => {
+    setCount((count) => count + 1);
+  };
 
-    // We are good citizens and memoize our ref callbacks
-    const inputRef = useCallback((input) => {
-      console.log(input);
-    }, []);
+  // We are good citizens and memoize our ref callbacks
+  const inputRef = useCallback((input: HTMLInputElement | null) => {
+    console.log(input);
+  }, []);
 
-    return (
-      <div>
-        <MyInput ref={count > 10 ? inputRef : undefined} autoFocus />
-        Clicked {count} times.
-        <button onClick={increaseCount}>Increase</button>
-      </div>
-    );
-  }
-  ```
+  return (
+    <div>
+      <MyInput ref={count > 10 ? inputRef : undefined} autoFocus />
+      Clicked {count} times.
+      <button onClick={increaseCount}>Increase</button>
+    </div>
+  );
+}
+```
 
 [`react-merge-refs`]: https://github.com/gregberge/react-merge-refs/
 [`react-best-merge-refs`]: https://github.com/alvaro-cuesta/react-best-merge-refs
