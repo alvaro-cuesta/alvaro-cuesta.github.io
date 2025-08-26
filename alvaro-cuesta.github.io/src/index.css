@@ -232,3 +232,43 @@ blockquote {
     --pico-font-size: 118.75% !important;
   }
 }
+
+figure {
+  margin-bottom: var(--pico-block-spacing-vertical);
+  padding: var(--pico-block-spacing-vertical)
+    var(--pico-block-spacing-horizontal);
+  border-radius: var(--pico-border-radius);
+  background: var(--pico-card-background-color);
+  box-shadow: var(--pico-card-box-shadow);
+}
+figure > figcaption {
+  margin-right: calc(var(--pico-block-spacing-horizontal) * -1);
+  margin-left: calc(var(--pico-block-spacing-horizontal) * -1);
+  padding: calc(var(--pico-block-spacing-vertical) * 0.66)
+    var(--pico-block-spacing-horizontal);
+  background-color: var(--pico-card-sectioning-background-color);
+}
+figure > figcaption {
+  margin-top: var(--pico-block-spacing-vertical);
+  margin-bottom: calc(var(--pico-block-spacing-vertical) * -1);
+  border-top: var(--pico-border-width) solid var(--pico-card-border-color);
+  border-bottom-right-radius: var(--pico-border-radius);
+  border-bottom-left-radius: var(--pico-border-radius);
+}
+
+figure:has(> pre) {
+  padding: 0;
+
+  & > figcaption {
+    margin: 0;
+    background: var(--pico-card-background-color);
+    padding: 0 var(--pico-block-spacing-horizontal)
+      /* @hack Without this the inner content loses its bottom margins */
+      calc(var(--pico-block-spacing-vertical) * 0.1)
+      var(--pico-block-spacing-horizontal);
+  }
+}
+
+:where(pre):not(figure > pre) {
+  box-shadow: var(--pico-card-box-shadow);
+}

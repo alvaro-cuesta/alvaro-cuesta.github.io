@@ -19,7 +19,7 @@ This means that the following code:
 
 <a id="logging-buggy"></a>
 
-```tsx
+```tsx caption=codesandbox-1
 function MyDiv({ children }: { children?: ReactNode }) {
   const ref = (div: HTMLDivElement) => {
     console.log("Inserted", div);
@@ -46,8 +46,6 @@ function App() {
 }
 ```
 
-[_(CodeSandbox)_](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-1-qq5qyk)
-
 ...will log:
 
 1. `Inserted` on initial mount, when the `<div>` HTML element is inserted into the DOM.
@@ -60,7 +58,7 @@ We can fix this issue by making the function reference stable across renders, fo
 
 <a id="logging-fixed"></a>
 
-```tsx
+```tsx caption=codesandbox-2
 function MyDiv({ children }: { children?: ReactNode }) {
   // Now `ref` will be stable across renders since`useCallback` memoizes it
   const ref = useCallback((div: HTMLDivElement) => {
@@ -87,8 +85,6 @@ function App() {
   );
 }
 ```
-
-[_(CodeSandbox)_](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-2-rlkk29)
 
 ...which will **only** log:
 
@@ -147,7 +143,7 @@ function MyInput({ externalRef }: { externalRef?: Ref<HTMLInputElement> }) {
 There are a few interesting use cases for refs. For example, we might want to focus an `<input>` as soon as it is
 inserted into the DOM:
 
-```tsx
+```tsx caption=codesandbox-3
 function MyInput() {
   const focusInput = useCallback((input: HTMLInputElement | null) => {
     input?.focus();
@@ -157,13 +153,11 @@ function MyInput() {
 }
 ```
 
-[_(CodeSandbox)_](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-3-4kk4n7)
-
 As we saw earlier, [React's `ref` callback guarantees](#react-ref-callback-guarantees) ensure this works flawlessly
 because the callback is **only** called once (when the `<input>` is initially inserted into the DOM). But what happens
 when we want to support an external `ref` from props?
 
-```tsx
+```tsx caption=codesandbox-4
 import { mergeRefs } from "some-ref-merging-library";
 
 function MyInput({ externalRef }: { externalRef?: Ref<HTMLInputElement> }) {
@@ -174,8 +168,6 @@ function MyInput({ externalRef }: { externalRef?: Ref<HTMLInputElement> }) {
   return <input ref={mergeRefs([externalRef, focusInput])} type="text" />;
 }
 ```
-
-[_(CodeSandbox)_](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-4-w2yfkq)
 
 Since `mergeRefs` creates a new function on **every render**, its reference is by definition unstable, causing the same
 issue we saw earlier. Can we fix it the same way as before?
@@ -208,7 +200,7 @@ function MyInput({ externalRef }: { externalRef?: Ref<HTMLInputElement> }) {
 The problem with that code is that **you don't control `externalRef`** so, if it is unstable, the dependencies in `(1)`
 will invalidate and the memoized function will be recreated. If someone uses your component like this:
 
-```tsx
+```tsx caption=codesandbox-5
 function App() {
   const [count, setCount] = useState(0);
   const increaseCount = () => {
@@ -231,8 +223,6 @@ function App() {
 }
 ```
 
-[_(CodeSandbox)_](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-5-kjv6gc)
-
 ...React will see a new function on every render, and **your input will be focused every time the user clicks the
 _"Increase"_ button**.
 
@@ -243,7 +233,7 @@ memoize their ref callback as well. That's fine, but the problem is that...
 
 Since you are aware of this issue, you memoize all your callback refs to avoid breaking someone else's code:
 
-```tsx
+```tsx caption=codesandbox-6
 import { SomeoneElsesInput } from "some-ui-library";
 
 function App() {
@@ -268,8 +258,6 @@ function App() {
 ```
 
 Again, **can you spot the issue?**
-
-[_(CodeSandbox)_](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-6-fm3ndz)
 
 Even if you memoize your callback refs, `SomeoneElsesInput` might merge them with unstable callbacks (possibly even from
 third-party libraries) and create unstable callbacks. This pattern is common across React's ecosystem. The worst part is
@@ -406,3 +394,15 @@ function App() {
 [`react-merge-refs`]: https://github.com/gregberge/react-merge-refs/
 [`react-best-merge-refs`]: https://github.com/alvaro-cuesta/react-best-merge-refs
 [facebook/react#29757]: https://github.com/facebook/react/issues/29757
+
+[^codesandbox-1]: [CodeSandbox](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-1-qq5qyk)
+
+[^codesandbox-2]: [CodeSandbox](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-2-rlkk29)
+
+[^codesandbox-3]: [CodeSandbox](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-3-4kk4n7)
+
+[^codesandbox-4]: [CodeSandbox](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-4-w2yfkq)
+
+[^codesandbox-5]: [CodeSandbox](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-5-kjv6gc)
+
+[^codesandbox-6]: [CodeSandbox](https://codesandbox.io/p/sandbox/your-react-refs-might-be-breaking-someone-elses-code-6-fm3ndz)

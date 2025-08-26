@@ -10,6 +10,8 @@ import recmaPluginInjectisMDXComponent from "recma-mdx-is-mdx-component";
 import rehypeShiftHeading from "rehype-shift-heading";
 import withToc from "@stefanprobst/rehype-extract-toc";
 import withTocExport from "@stefanprobst/rehype-extract-toc/mdx";
+import remarkParseCodeMeta from "./remarkParseCodeMeta.mts";
+import remarkCodeCaptionToFigure from "./remarkCodeCaptionToFigure.mts";
 
 const hooks = createLoader({
   remarkRehypeOptions: {
@@ -42,7 +44,12 @@ const hooks = createLoader({
     withToc,
     withTocExport,
   ],
-  remarkPlugins: [remarkGfm, remarkMath],
+  remarkPlugins: [
+    remarkGfm,
+    remarkMath,
+    remarkParseCodeMeta,
+    remarkCodeCaptionToFigure,
+  ],
   recmaPlugins: [recmaPluginInjectisMDXComponent],
   // I couldn't get this to work. I think it's because the MDX file are loading a different instance of the context, so
   // the provider is not the same as the one that is being used in the rest of the app...
