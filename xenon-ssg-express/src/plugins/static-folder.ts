@@ -1,6 +1,6 @@
-import path from "node:path";
-import fs from "node:fs/promises";
-import express from "express";
+import * as path from "node:path";
+import * as fs from "node:fs/promises";
+import * as express from "express";
 import type {
   Plugin,
   PluginAttachToExpressFunction,

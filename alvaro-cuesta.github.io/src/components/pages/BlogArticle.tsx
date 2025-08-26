@@ -2,7 +2,7 @@ import { Template } from "../Template";
 import { Link } from "../atoms/Link";
 import { BlogListsLayout } from "../molecules/BlogListsLayout";
 import { useBlogItems } from "../../blog/promise";
-import React from "react";
+import * as React from "react";
 import {
   blogItemDateToUTCISO8601Z,
   equalsBlogItemDates,

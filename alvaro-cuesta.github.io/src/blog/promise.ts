@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
-import path from "node:path";
+import * as fs from "node:fs/promises";
+import * as path from "node:path";
 import { parseBlogItemModuleFromImportModule } from "./item-module";
 import { suspendablePromiseMaker } from "xenon-ssg/src/promise";
 import { analyzeBlogItems } from "./analyze";

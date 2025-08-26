@@ -1,6 +1,6 @@
 import { type RenderToStreamOptions, renderToFileAtomic } from "../render";
-import path from "node:path";
-import fs from "node:fs/promises";
+import * as path from "node:path";
+import * as fs from "node:fs/promises";
 import { mapIter } from "../iter";
 import { canonicalizeHref } from "../url";
 import { Root } from "../Root";

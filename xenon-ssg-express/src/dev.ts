@@ -1,6 +1,7 @@
-import express, { type Express } from "express";
+import * as express from "express";
+import { type Express } from "express";
 import { makeXenonMiddleware } from "xenon-ssg/src/middleware";
-import morgan from "morgan";
+import * as morgan from "morgan";
 import { type XenonExpressSite, getSiteMeta } from ".";
 import { getTagsFromInjectableRaw } from "./plugins/plugins";
 import type { UnknownRecord } from "type-fest";

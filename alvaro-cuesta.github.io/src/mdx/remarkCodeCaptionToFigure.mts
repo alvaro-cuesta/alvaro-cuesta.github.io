@@ -2,7 +2,7 @@ import type { Plugin } from "unified";
 import { visit } from "unist-util-visit";
 import type { Parent } from "unist";
 import type { FootnoteDefinition } from "mdast";
-import type { Code, Literal } from "mdast";
+import type { Code } from "mdast";
 import type { Node } from "unist";
 
 interface FigureNode extends Parent {
